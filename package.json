@@ -1,0 +1,44 @@
+{
+  "name": "mitata-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --project=fluxos",
+    "prints": "playwright test --project=prints",
+    "fotos": "node scripts/baixar-fotos.mjs",
+    "logo": "node scripts/logo-creme.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4",
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "prettier": "^3.9.9",
+    "sharp": "^0.34",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.0.2"
+  },
+  "packageManager": "pnpm@12.6.0"
+}
