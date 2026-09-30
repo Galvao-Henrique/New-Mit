@@ -1,1 +1,66 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-marinho: #0b1633;
+  --color-marinho-superficie: #14244d;
+  --color-azul-mitata: #1b3c91;
+  --color-dourado: #c9a45c;
+  --color-dourado-escuro: #7a5c24;
+  --color-creme: #f4ede1;
+  --color-tinta: #1a1d29;
+
+  --font-titulo: var(--font-zilla), ui-serif, Georgia, serif;
+  --font-destaque: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-texto: var(--font-source), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-marinho text-creme font-texto;
+  font-size: 1rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--color-creme);
+  color: var(--color-tinta);
+  font-weight: 600;
+  border-radius: 0.25rem;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Revelação ao rolar: só esconde quando o JavaScript está ativo. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+html.js [data-reveal].revelado {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

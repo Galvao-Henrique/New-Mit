@@ -1,0 +1,42 @@
+import type { ReactNode } from 'react';
+
+type BotaoProps = {
+  variante: 'primario' | 'contorno';
+  children: ReactNode;
+  href?: string;
+  onClick?: () => void;
+  externo?: boolean;
+  className?: string;
+};
+
+const base =
+  'inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-6 py-3 font-texto text-base font-semibold transition-colors ' +
+  'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-dourado';
+
+const variantes = {
+  primario: 'bg-dourado text-marinho hover:bg-creme',
+  contorno: 'border-2 border-dourado text-creme hover:bg-dourado hover:text-marinho',
+} as const;
+
+export function Botao({ variante, children, href, onClick, externo = false, className = '' }: BotaoProps) {
+  const classes = `${base} ${variantes[variante]} ${className}`;
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className={classes}
+        onClick={onClick}
+        {...(externo ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button type="button" className={classes} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
