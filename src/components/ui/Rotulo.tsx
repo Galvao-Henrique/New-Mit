@@ -9,6 +9,8 @@ type RotuloProps = {
 export function Rotulo({ tom, children, className = '' }: RotuloProps) {
   const cor = tom === 'escuro' ? 'text-dourado' : 'text-dourado-escuro';
   return (
-    <p className={`font-texto text-[13px] font-semibold uppercase tracking-[0.3em] ${cor} ${className}`}>{children}</p>
+    <p className={`font-texto text-[13px] font-semibold lg:text-sm uppercase tracking-[0.3em] ${cor} ${className}`}>
+      {children}
+    </p>
   );
 }

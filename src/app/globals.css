@@ -30,10 +30,6 @@ html {
   scroll-padding-top: var(--altura-topo);
 }
 
-section[id] {
-  scroll-margin-top: var(--altura-topo);
-}
-
 body {
   @apply bg-marinho text-creme font-texto;
   font-size: 1rem;

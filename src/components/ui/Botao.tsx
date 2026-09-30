@@ -10,7 +10,7 @@ type BotaoProps = {
 };
 
 const base =
-  'inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-6 py-3 font-texto text-base font-semibold transition-colors ' +
+  'inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-6 py-3 font-texto text-base font-semibold transition-colors lg:min-h-14 lg:px-8 lg:text-[17px] ' +
   'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-dourado';
 
 const variantes = {

@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section
       id={site.ancoras.inicio}
-      className="grid grid-cols-[minmax(0,1fr)] bg-marinho pt-16 lg:min-h-svh lg:grid-cols-2 lg:pt-20"
+      className="grid grid-cols-[minmax(0,1fr)] bg-marinho lg:min-h-svh lg:grid-cols-2"
       aria-labelledby="titulo-hero"
     >
       <div className="relative aspect-[4/3] lg:order-2 lg:aspect-auto">
@@ -22,9 +22,14 @@ export function Hero() {
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-t from-marinho/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-marinho/40 lg:via-transparent"
         />
+        {/* Faixa azul-marinho sob o topo fixo: mantém legíveis os itens que ficam sobre a foto. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-marinho/90 via-marinho/50 to-transparent"
+        />
       </div>
 
-      <div className="flex items-center px-4 py-14 sm:px-6 lg:order-1 lg:py-24 lg:pl-10 lg:pr-16 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
+      <div className="flex items-center px-4 py-14 sm:px-6 lg:order-1 lg:py-24 lg:pt-36lg:pl-10 lg:pr-16 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
         <Revelar className="max-w-xl">
           <Rotulo tom="escuro">{hero.rotulo}</Rotulo>
           <h1
