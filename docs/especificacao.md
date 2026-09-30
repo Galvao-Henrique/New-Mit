@@ -46,7 +46,8 @@ O site precisa:
 | `marinho` | `#0B1633` | fundo das seções escuras |
 | `marinho-superficie` | `#14244D` | cards e painéis sobre o marinho |
 | `azul-mitata` | `#1B3C91` | logo e blocos de destaque sobrepostos |
-| `dourado` | `#C9A45C` | ornamentos, linhas, números, botão principal |
+| `dourado` | `#C9A45C` | ornamentos, linhas, números, botão principal (sobre fundos escuros) |
+| `dourado-escuro` | `#7A5C24` | ornamentos e destaques nas seções creme (o `dourado` dá só 2:1 sobre o creme) |
 | `creme` | `#F4EDE1` | fundo das seções claras |
 | `tinta` | `#1A1D29` | texto sobre o creme |
 
