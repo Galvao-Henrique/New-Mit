@@ -2,7 +2,7 @@
 
 **Data:** 30/09/2026
 **Situação:** aguardando revisão
-**Pasta:** `C:\Henrique\vscode\mitata-site` (projeto novo; `mitata-alimentos` continua intacto e serve de fonte dos dados)
+**Pasta:** `C:\Henrique\vscode\MITATA-NOVO` (projeto novo; `mitata-alimentos` continua intacto e serve de fonte dos dados)
 
 ## 1. Objetivo
 
