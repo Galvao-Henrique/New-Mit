@@ -1,0 +1,92 @@
+[
+  {
+    "id": "hero",
+    "arquivo": "hero.jpg",
+    "alt": "Peça de carne bovina marmorizada sobre tábua de madeira escura, com luz lateral",
+    "autor": "Urfriendlyphotog",
+    "origem": "https://www.pexels.com/photo/marbled-wagyu-beef-on-rustic-wooden-table-31406831/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/31406831/pexels-photo-31406831.jpeg?w=2400"
+  },
+  {
+    "id": "categoria-bovinos",
+    "arquivo": "categoria-bovinos.jpg",
+    "alt": "Peça de carne bovina amarrada e temperada com ervas sobre madeira",
+    "autor": "Lee Hanson",
+    "origem": "https://www.pexels.com/photo/seasoned-beef-joint-on-wooden-surface-37414915/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/37414915/pexels-photo-37414915.jpeg?w=2400"
+  },
+  {
+    "id": "categoria-suinos",
+    "arquivo": "categoria-suinos.jpg",
+    "alt": "Peça de barriga suína com costela ao lado de outros cortes de carne crua sobre fundo escuro",
+    "autor": "Domenico Scaglione",
+    "origem": "https://www.pexels.com/photo/assorted-cuts-of-raw-meat-on-dark-background-28881685/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/28881685/pexels-photo-28881685.jpeg?w=2400"
+  },
+  {
+    "id": "categoria-aves",
+    "arquivo": "categoria-aves.jpg",
+    "alt": "Pedaços de frango cru temperados sobre uma tábua de madeira",
+    "autor": "Mateusz Feliksik",
+    "origem": "https://www.pexels.com/photo/seasoned-meat-on-wooden-chopping-board-13376576/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/13376576/pexels-photo-13376576.jpeg?w=2400"
+  },
+  {
+    "id": "categoria-linguicas",
+    "arquivo": "categoria-linguicas.jpg",
+    "alt": "Linguiças cruas com um ramo de alecrim sobre fundo escuro",
+    "autor": "Domenico Scaglione",
+    "origem": "https://www.pexels.com/photo/fresh-raw-sausages-with-rosemary-on-dark-background-28881687/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/28881687/pexels-photo-28881687.jpeg?w=2400"
+  },
+  {
+    "id": "compromisso",
+    "arquivo": "compromisso.jpg",
+    "alt": "Mãos de um profissional preparando uma peça de carne bovina marmorizada sobre a tábua",
+    "autor": "Rachel Claire",
+    "origem": "https://www.pexels.com/photo/person-holding-raw-meat-on-brown-wooden-table-8112382/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/8112382/pexels-photo-8112382.jpeg?w=2400"
+  },
+  {
+    "id": "empresas",
+    "arquivo": "empresas.jpg",
+    "alt": "Cortes de carne crua sobre uma tábua numa cozinha profissional pouco iluminada",
+    "autor": "Rachel Claire",
+    "origem": "https://www.pexels.com/photo/raw-meat-on-a-cutting-board-8112380/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/8112380/pexels-photo-8112380.jpeg?w=2400"
+  },
+  {
+    "id": "costelinha-suina",
+    "arquivo": "costelinha-suina.jpg",
+    "alt": "Costelinhas suínas cruas dispostas sobre uma bancada",
+    "autor": "NC Farm Bureau Mark",
+    "origem": "https://www.pexels.com/photo/displayed-fresh-raw-ribs-7163989/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/7163989/pexels-photo-7163989.jpeg?w=2400"
+  },
+  {
+    "id": "nuggets-de-frango",
+    "arquivo": "nuggets-de-frango.jpg",
+    "alt": "Nuggets de frango empanados e dourados sobre uma pedra escura",
+    "autor": "Vhusko",
+    "origem": "https://www.pexels.com/photo/fried-chicken-nuggets-18188572/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/18188572/pexels-photo-18188572.jpeg?w=2400"
+  },
+  {
+    "id": "file-de-peito-de-frango",
+    "arquivo": "file-de-peito-de-frango.jpg",
+    "alt": "Filés de peito de frango crus e temperados sobre uma pedra escura",
+    "autor": "Alleksana",
+    "origem": "https://www.pexels.com/photo/uncooked-marinated-chicken-breast-6107721/",
+    "licenca": "Pexels",
+    "download": "https://images.pexels.com/photos/6107721/pexels-photo-6107721.jpeg?w=2400"
+  }
+]

@@ -10,7 +10,13 @@ export const cortes: Corte[] = [
   { slug: 'lingua-bovina', nome: 'Língua Bovina', categoria: 'bovinos', subcategoria: 'Miúdo Bovino' },
   { slug: 'rumen-de-bovino', nome: 'Rúmen de Bovino', categoria: 'bovinos', subcategoria: 'Miúdo Bovino' },
 
-  { slug: 'costelinha-suina', nome: 'Costelinha Suína', categoria: 'suinos', subcategoria: 'Suíno Com Osso' },
+  {
+    slug: 'costelinha-suina',
+    nome: 'Costelinha Suína',
+    categoria: 'suinos',
+    subcategoria: 'Suíno Com Osso',
+    foto: 'costelinha-suina',
+  },
   { slug: 'metade-suina', nome: 'Metade Suína', categoria: 'suinos', subcategoria: 'Suíno Com Osso' },
   {
     slug: 'pernil-suino-com-pele-e-com-osso',
@@ -36,7 +42,13 @@ export const cortes: Corte[] = [
   { slug: 'asa-de-frango', nome: 'Asa de Frango', categoria: 'aves', subcategoria: 'Aves' },
   { slug: 'coxa-com-sobrecoxa', nome: 'Coxa Com Sobrecoxa', categoria: 'aves', subcategoria: 'Aves' },
   { slug: 'coxinha-da-asa', nome: 'Coxinha da Asa', categoria: 'aves', subcategoria: 'Aves' },
-  { slug: 'file-de-peito-de-frango', nome: 'Filé de Peito de Frango', categoria: 'aves', subcategoria: 'Aves' },
+  {
+    slug: 'file-de-peito-de-frango',
+    nome: 'Filé de Peito de Frango',
+    categoria: 'aves',
+    subcategoria: 'Aves',
+    foto: 'file-de-peito-de-frango',
+  },
   {
     slug: 'file-de-peito-de-frango-empanado',
     nome: 'Filé de Peito de Frango Empanado',
@@ -44,7 +56,13 @@ export const cortes: Corte[] = [
     subcategoria: 'Aves',
   },
   { slug: 'moela', nome: 'Moela', categoria: 'aves', subcategoria: 'Aves' },
-  { slug: 'nuggets-de-frango', nome: 'Nuggets de Frango', categoria: 'aves', subcategoria: 'Aves' },
+  {
+    slug: 'nuggets-de-frango',
+    nome: 'Nuggets de Frango',
+    categoria: 'aves',
+    subcategoria: 'Aves',
+    foto: 'nuggets-de-frango',
+  },
   { slug: 'peito-de-frango-com-osso', nome: 'Peito de Frango Com Osso', categoria: 'aves', subcategoria: 'Aves' },
 
   {
