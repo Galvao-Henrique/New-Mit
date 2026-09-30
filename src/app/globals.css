@@ -48,7 +48,7 @@ html.js [data-reveal] {
     transform 0.6s ease;
 }
 
-html.js [data-reveal].revelado {
+html.js [data-reveal][data-revelado] {
   opacity: 1;
   transform: none;
 }
