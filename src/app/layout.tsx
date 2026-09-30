@@ -25,7 +25,8 @@ const source = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: 'Mitata Alimentos',
+  title: 'Mitata Alimentos | Atacado de carnes em São José dos Campos',
+  description: 'Atacado de bovinos, suínos, aves e linguiças com entrega diária no Vale do Paraíba.',
 };
 
 const marcarJs = "document.documentElement.classList.add('js')";

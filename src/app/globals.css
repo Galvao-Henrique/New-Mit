@@ -14,8 +14,24 @@
   --font-texto: var(--font-source), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Altura do topo fixo: âncoras e foco por teclado não ficam escondidos atrás dele. */
+:root {
+  --altura-topo: 4rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --altura-topo: 5rem;
+  }
+}
+
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--altura-topo);
+}
+
+section[id] {
+  scroll-margin-top: var(--altura-topo);
 }
 
 body {
