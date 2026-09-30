@@ -2,11 +2,12 @@
   {
     "id": "hero",
     "arquivo": "hero.jpg",
-    "alt": "Peça de carne bovina marmorizada sobre tábua de madeira escura, com luz lateral",
-    "autor": "Urfriendlyphotog",
-    "origem": "https://www.pexels.com/photo/marbled-wagyu-beef-on-rustic-wooden-table-31406831/",
-    "licenca": "Pexels",
-    "download": "https://images.pexels.com/photos/31406831/pexels-photo-31406831.jpeg?w=2400"
+    "alt": "Cortes de carne bovina crua numa bandeja de metal sobre madeira escura, com cutelo e sal, sob luz lateral",
+    "autor": "James Kern",
+    "origem": "https://unsplash.com/photos/bnLqotJKxn4",
+    "licenca": "Unsplash",
+    "download": "https://images.unsplash.com/photo-1625604086988-6e41981275fa?w=2400&q=85&fm=jpg",
+    "espelhar": true
   },
   {
     "id": "categoria-bovinos",
@@ -20,11 +21,11 @@
   {
     "id": "categoria-suinos",
     "arquivo": "categoria-suinos.jpg",
-    "alt": "Peça de barriga suína com costela ao lado de outros cortes de carne crua sobre fundo escuro",
-    "autor": "Domenico Scaglione",
-    "origem": "https://www.pexels.com/photo/assorted-cuts-of-raw-meat-on-dark-background-28881685/",
+    "alt": "Bistecas suínas cruas com capa de gordura sobre uma tábua de madeira, com alecrim, tomate e alho",
+    "autor": "Shliftik",
+    "origem": "https://www.pexels.com/photo/uncooked-meat-slices-on-a-wooden-chopping-board-7333262/",
     "licenca": "Pexels",
-    "download": "https://images.pexels.com/photos/28881685/pexels-photo-28881685.jpeg?w=2400"
+    "download": "https://images.pexels.com/photos/7333262/pexels-photo-7333262.jpeg?w=2400"
   },
   {
     "id": "categoria-aves",
@@ -66,7 +67,7 @@
     "id": "costelinha-suina",
     "arquivo": "costelinha-suina.jpg",
     "alt": "Costelinhas suínas cruas dispostas sobre uma bancada",
-    "autor": "NC Farm Bureau Mark",
+    "autor": "Mark Stebnicki",
     "origem": "https://www.pexels.com/photo/displayed-fresh-raw-ribs-7163989/",
     "licenca": "Pexels",
     "download": "https://images.pexels.com/photos/7163989/pexels-photo-7163989.jpeg?w=2400"

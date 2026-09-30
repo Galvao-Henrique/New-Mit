@@ -24,8 +24,10 @@ for (const foto of fotos) {
     process.exit(1);
   }
   const original = Buffer.from(await resposta.arrayBuffer());
-  const otimizada = await sharp(original)
-    .rotate()
+  // `espelhar` (opcional no JSON) inverte a foto na horizontal, para levar o assunto ao lado desejado.
+  let imagem = sharp(original).rotate();
+  if (foto.espelhar) imagem = imagem.flop();
+  const otimizada = await imagem
     .resize({ width: 2400, withoutEnlargement: true })
     .jpeg({ quality: 80, mozjpeg: true })
     .toBuffer();
