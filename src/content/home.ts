@@ -12,4 +12,15 @@ export const home = {
     verCortes: 'Ver cortes',
     cotacaoWhatsapp: 'Cotação pelo WhatsApp',
   },
+  mapa: {
+    rotulo: 'Mapa de cortes',
+    titulo: 'Conheça o boi Mitata',
+    apoio: 'Escolha uma parte do boi para ver o corte e incluí-lo na sua lista de cotação.',
+    rotuloDesenho: 'Partes do boi',
+    rotuloLista: 'Cortes bovinos',
+    vazio: 'Passe o mouse ou toque numa parte do boi',
+    imagemIlustrativa: 'Imagem ilustrativa',
+    adicionar: 'Adicionar à cotação',
+    remover: 'Remover da cotação',
+  },
 } as const;
