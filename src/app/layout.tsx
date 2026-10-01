@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Source_Sans_3, Zilla_Slab } from 'next/font/google';
+import { MarcaHidratacao } from '@/components/layout/MarcaHidratacao';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { baseDosMetadados, dadosEstruturados } from '@/lib/seo';
 import './globals.css';
@@ -41,15 +42,42 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 };
 
-const marcarJs = "document.documentElement.classList.add('js')";
+/**
+ * Roda no <head>, antes dos scripts do Next:
+ * - põe `js` no <html>: o CSS só esconde as revelações quando há JavaScript;
+ * - se a hidratação não avisar em 3 s (MarcaHidratacao), tira o `js`: um script que falhou (rede ruim,
+ *   navegador antigo, extensão) não deixa as seções invisíveis;
+ * - marca `data-rolado` no <html> com a página rolada, também num link direto (/#contato) ou ao recarregar
+ *   no meio da página, para o topo ficar sólido e legível sem esperar o React.
+ */
+const scriptDoHead = `(function () {
+  var html = document.documentElement;
+  html.classList.add('js');
+  setTimeout(function () {
+    if (!window.__hidratado) html.classList.remove('js');
+  }, 3000);
+  var rolado;
+  function marcarRolagem() {
+    var agora = window.scrollY > 24;
+    if (agora === rolado) return;
+    rolado = agora;
+    if (agora) html.setAttribute('data-rolado', '');
+    else html.removeAttribute('data-rolado');
+  }
+  marcarRolagem();
+  window.addEventListener('scroll', marcarRolagem, { passive: true });
+  window.addEventListener('load', marcarRolagem);
+  window.addEventListener('hashchange', marcarRolagem);
+})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className={`${zilla.variable} ${playfair.variable} ${source.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: marcarJs }} />
+        <script dangerouslySetInnerHTML={{ __html: scriptDoHead }} />
       </head>
       <body>
+        <MarcaHidratacao />
         <JsonLd dados={dadosEstruturados()} />
         {children}
       </body>

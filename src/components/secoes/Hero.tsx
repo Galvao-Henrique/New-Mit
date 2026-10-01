@@ -1,7 +1,6 @@
 import { Botao } from '@/components/ui/Botao';
 import { Divisor } from '@/components/ui/Divisor';
 import { Foto } from '@/components/ui/Foto';
-import { Revelar } from '@/components/ui/Revelar';
 import { Rotulo } from '@/components/ui/Rotulo';
 import { home } from '@/content/home';
 import { site } from '@/config/site';
@@ -30,7 +29,8 @@ export function Hero() {
       </div>
 
       <div className="flex items-center px-4 pb-20 pt-14 sm:px-6 sm:pb-24 lg:order-1 lg:py-24 lg:pt-36 lg:pl-10 lg:pr-16 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
-        <Revelar className="max-w-xl">
+        {/* Acima da dobra: visível desde o HTML, com entrada só em CSS (não depende da hidratação). */}
+        <div className="max-w-xl motion-safe:animate-entrada">
           <Rotulo tom="escuro">{hero.rotulo}</Rotulo>
           <h1
             id="titulo-hero"
@@ -48,7 +48,7 @@ export function Hero() {
               {hero.cotacaoWhatsapp}
             </Botao>
           </div>
-        </Revelar>
+        </div>
       </div>
     </section>
   );

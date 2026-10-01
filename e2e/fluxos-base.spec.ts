@@ -1,4 +1,25 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
+
+/** Cor de fundo calculada do topo fixo ("rgba(0, 0, 0, 0)" = transparente). */
+const fundoDoTopo = (page: Page) => page.locator('header').evaluate((el) => getComputedStyle(el).backgroundColor);
+const TRANSPARENTE = 'rgba(0, 0, 0, 0)';
+
+/** Opacidade que se vê: a do elemento vezes a de todos os ancestrais. */
+async function opacidadeVisivel(alvo: Locator) {
+  return alvo.evaluate((el) => {
+    let opacidade = 1;
+    for (let e: Element | null = el; e; e = e.parentElement) opacidade *= Number(getComputedStyle(e).opacity);
+    return opacidade;
+  });
+}
+
+/** Bloqueia os scripts do Next (o CSS, também em _next/static/chunks/, continua): a hidratação nunca acontece. */
+async function bloquearScripts(page: Page) {
+  await page.route(
+    (url) => url.pathname.startsWith('/_next/static/chunks/') && url.pathname.endsWith('.js'),
+    (rota) => rota.abort(),
+  );
+}
 
 test('menu leva às seções', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -21,10 +42,12 @@ test('menu do celular abre e fecha', async ({ page }) => {
 test('topo fica sólido ao rolar', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  const topo = page.locator('header');
-  await expect(topo).not.toHaveAttribute('data-solido', 'true');
+  await page.waitForFunction(() => (window as { __hidratado?: boolean }).__hidratado === true);
+  await expect(page.locator('html')).not.toHaveAttribute('data-rolado');
+  expect(await fundoDoTopo(page)).toBe(TRANSPARENTE);
   await page.evaluate(() => window.scrollTo(0, 400));
-  await expect(topo).toHaveAttribute('data-solido', 'true');
+  await expect(page.locator('html')).toHaveAttribute('data-rolado', '');
+  await expect.poll(() => fundoDoTopo(page)).not.toBe(TRANSPARENTE);
 });
 
 test('pular para o conteúdo', async ({ page }) => {
@@ -53,5 +76,29 @@ test.describe('sem JavaScript', () => {
     const titulo = page.locator('h1');
     await expect(titulo).toBeVisible();
     await expect(titulo).toHaveCSS('opacity', '1');
+  });
+});
+
+test.describe('scripts do Next com falha (sem hidratação)', () => {
+  test('o conteúdo aparece mesmo assim', async ({ page }) => {
+    await bloquearScripts(page);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const alvos = [
+      page.locator('#titulo-hero'),
+      page.locator('#titulo-compromisso'),
+      page.locator('#contato').getByRole('link', { name: /^Chamar no WhatsApp/ }),
+    ];
+    for (const alvo of alvos) {
+      await expect.poll(() => opacidadeVisivel(alvo), { timeout: 5_000 }).toBe(1);
+    }
+  });
+
+  test('link direto para #contato: o topo já fica sólido', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await bloquearScripts(page);
+    await page.goto('/#contato', { waitUntil: 'domcontentloaded' });
+    // O script do <head> marca a rolagem antes do React (aqui, o React nunca chega).
+    await expect(page.locator('html')).toHaveAttribute('data-rolado', '', { timeout: 5_000 });
+    await expect.poll(() => fundoDoTopo(page), { timeout: 5_000 }).not.toBe(TRANSPARENTE);
   });
 });

@@ -1,6 +1,5 @@
 import { Knife, Storefront, Truck, WhatsappLogo } from '@phosphor-icons/react/dist/ssr';
 import type { Icon } from '@phosphor-icons/react';
-import { Revelar } from '@/components/ui/Revelar';
 import { home } from '@/content/home';
 
 const icones: Record<(typeof home.diferenciais.itens)[number]['icone'], Icon> = {
@@ -18,7 +17,8 @@ export function Diferenciais() {
       aria-label={diferenciais.rotuloLista}
       className="relative z-10 -mt-8 bg-gradient-to-b from-transparent from-50% to-creme to-50% px-4 sm:-mt-12 sm:px-6 lg:-mt-16 lg:px-10"
     >
-      <Revelar className="mx-auto max-w-7xl">
+      {/* Na primeira dobra: visível desde o HTML, com entrada só em CSS (não depende da hidratação). */}
+      <div className="mx-auto max-w-7xl motion-safe:animate-entrada motion-safe:[animation-delay:150ms]">
         <ul className="grid gap-x-8 gap-y-6 rounded-sm bg-creme px-6 py-8 text-tinta shadow-[0_20px_44px_-20px_rgb(11_22_51/0.6)] sm:grid-cols-2 lg:grid-cols-4 lg:px-10 lg:py-10">
           {diferenciais.itens.map((item) => {
             const Icone = icones[item.icone];
@@ -30,7 +30,7 @@ export function Diferenciais() {
             );
           })}
         </ul>
-      </Revelar>
+      </div>
     </section>
   );
 }

@@ -12,6 +12,16 @@
   --font-titulo: var(--font-zilla), ui-serif, Georgia, serif;
   --font-destaque: var(--font-playfair), ui-serif, Georgia, serif;
   --font-texto: var(--font-source), ui-sans-serif, system-ui, sans-serif;
+
+  /* Entrada da primeira dobra (hero e diferenciais): só CSS, termina visível mesmo sem JavaScript. */
+  --animate-entrada: entrada 0.7s ease-out both;
+
+  @keyframes entrada {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
 }
 
 /* Altura do topo fixo: âncoras e foco por teclado não ficam escondidos atrás dele. */
@@ -51,7 +61,19 @@ body {
   top: 1rem;
 }
 
-/* Revelação ao rolar: só esconde quando o JavaScript está ativo. */
+/*
+  Topo fixo: transparente no alto da página e sólido com ela rolada. O data-rolado vem do script do <head>
+  (layout.tsx), que funciona antes do React e num link direto como /#contato; sem JavaScript, fica sempre sólido.
+*/
+html[data-rolado] [data-topo],
+html:not(.js) [data-topo] {
+  @apply border-creme/10 bg-marinho/95 backdrop-blur;
+}
+
+/*
+  Revelação ao rolar: só esconde quando o JavaScript está ativo. Se a hidratação falhar, o script do <head>
+  tira o `js` em 3 s e tudo aparece. A primeira dobra (hero, diferenciais) não usa revelação.
+*/
 html.js [data-reveal] {
   opacity: 0;
   transform: translateY(16px);
