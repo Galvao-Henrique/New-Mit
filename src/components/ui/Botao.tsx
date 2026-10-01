@@ -10,6 +10,8 @@ type BotaoProps = {
   externo?: boolean;
   /** Nome acessível completo; deve começar pelo texto visível (ex.: "Adicionar à cotação: Pá de Boi"). */
   rotuloAcessivel?: string;
+  /** Botão de alternar: expõe o estado em aria-pressed. */
+  pressionado?: boolean;
   className?: string;
 };
 
@@ -38,6 +40,7 @@ export function Botao({
   onClick,
   externo = false,
   rotuloAcessivel,
+  pressionado,
   className = '',
 }: BotaoProps) {
   const classes = `${base} ${estilos[tom].foco} ${estilos[tom][variante]} ${className}`;
@@ -57,7 +60,7 @@ export function Botao({
   }
 
   return (
-    <button type="button" className={classes} onClick={onClick} aria-label={rotuloAcessivel}>
+    <button type="button" className={classes} onClick={onClick} aria-label={rotuloAcessivel} aria-pressed={pressionado}>
       {children}
     </button>
   );

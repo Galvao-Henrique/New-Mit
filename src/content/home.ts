@@ -25,4 +25,45 @@ export const home = {
     adicionar: 'Adicionar à cotação',
     remover: 'Remover da cotação',
   },
+  diferenciais: {
+    rotuloLista: 'Diferenciais da Mitata',
+    itens: [
+      { icone: 'Truck', texto: 'Entrega diária no Vale do Paraíba' },
+      { icone: 'Storefront', texto: 'Exclusivo para atacado' },
+      { icone: 'Knife', texto: 'Bovinos, suínos, aves e linguiças' },
+      { icone: 'WhatsappLogo', texto: 'Pedido direto pelo WhatsApp' },
+    ],
+  },
+  catalogo: {
+    rotulo: 'Catálogo',
+    titulo: 'Nossos cortes',
+    aviso: 'Imagens ilustrativas',
+    rotuloCategorias: 'Categorias',
+    todos: 'Todos',
+    buscaRotulo: 'Buscar corte',
+    buscaPlaceholder: 'Ex.: picanha, fígado…',
+    vazio: 'Nenhum corte encontrado para',
+    limparBusca: 'Limpar busca',
+    adicionar: 'Adicionar à cotação',
+    remover: 'Remover da cotação',
+  },
+  cotacao: {
+    painelTitulo: 'Sua lista de cotação',
+    observacaoRotulo: 'Observação (opcional)',
+    observacaoPlaceholder: 'Ex.: quantidades, dia de entrega',
+    enviar: 'Enviar pelo WhatsApp',
+    vazia: 'Sua lista está vazia.',
+    verCatalogo: 'Ver catálogo',
+    fechar: 'Fechar lista de cotação',
+    verCotacao: 'Ver cotação',
+    removerItem: 'Remover',
+  },
 } as const;
+
+export function contagemCortes(n: number): string {
+  return `${n} ${n === 1 ? 'corte' : 'cortes'}`;
+}
+
+export function contagemItens(n: number): string {
+  return `${n} ${n === 1 ? 'item' : 'itens'}`;
+}

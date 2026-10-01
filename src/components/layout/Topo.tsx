@@ -48,7 +48,8 @@ export function Topo() {
           <button
             type="button"
             onClick={abrirPainel}
-            aria-label={`Abrir lista de cotação, ${quantidade} ${quantidade === 1 ? 'item' : 'itens'}`}
+            data-cotacao-topo=""
+            aria-label={`Cotação (${quantidade}): abrir lista de cotação`}
             className={`inline-flex min-h-11 items-center rounded-sm border border-dourado px-3 font-texto text-sm font-semibold text-creme transition-colors hover:bg-dourado hover:text-marinho sm:px-4 ${focoDourado}`}
           >
             Cotação ({quantidade})
