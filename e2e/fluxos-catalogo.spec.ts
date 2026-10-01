@@ -49,6 +49,20 @@ test('busca vazia', async ({ page }) => {
   await expect(catalogo(page).getByText('24 cortes', { exact: true })).toBeVisible();
 });
 
+test('corte sem foto própria mostra a silhueta e nenhuma imagem', async ({ page }) => {
+  await abrir(page);
+  const card = catalogo(page).locator('article', { has: page.getByRole('heading', { name: 'Boi Casado' }) });
+  await expect(card.locator('[data-midia="silhueta"] svg[data-silhueta="bovinos"]')).toHaveCount(1);
+  await expect(card.locator('img')).toHaveCount(0);
+});
+
+test('corte com foto própria continua com a foto', async ({ page }) => {
+  await abrir(page);
+  const card = catalogo(page).locator('article', { has: page.getByRole('heading', { name: 'Nuggets de Frango' }) });
+  await expect(card.locator('[data-midia="foto"] img')).toHaveCount(1);
+  await expect(card.locator('svg[data-silhueta]')).toHaveCount(0);
+});
+
 test('adicionar e remover', async ({ page }) => {
   await abrir(page);
   await adicionar(page, 'Boi Casado');

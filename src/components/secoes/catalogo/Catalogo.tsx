@@ -5,12 +5,13 @@ import { site } from '@/config/site';
 import { home } from '@/content/home';
 import { categorias } from '@/data/categorias';
 import { cortes } from '@/data/cortes';
-import { foto, fotoDoCorte } from '@/data/fotos';
+import { foto } from '@/data/fotos';
 import { CatalogoInterativo } from './CatalogoInterativo';
 
 export function Catalogo() {
   const { catalogo } = home;
-  const itens = cortes.map((corte) => ({ corte, foto: fotoDoCorte(corte) }));
+  // Só os cortes com foto própria mostram foto; os demais ganham a silhueta da categoria.
+  const itens = cortes.map((corte) => ({ corte, foto: corte.foto ? foto(corte.foto) : null }));
   const faixa = categorias.map((categoria) => ({ categoria, foto: foto(categoria.foto) }));
   return (
     <section

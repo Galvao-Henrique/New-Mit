@@ -11,7 +11,8 @@ import { CardCorte } from './CardCorte';
 
 export interface ItemCatalogo {
   corte: Corte;
-  foto: FotoRegistrada;
+  /** Foto própria do corte; sem ela o card mostra a silhueta da categoria. */
+  foto: FotoRegistrada | null;
 }
 
 type CatalogoInterativoProps = {
