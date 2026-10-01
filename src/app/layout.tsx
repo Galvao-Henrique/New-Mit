@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Source_Sans_3, Zilla_Slab } from 'next/font/google';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { dadosEstruturados, urlDoSite } from '@/lib/seo';
+import { baseDosMetadados, dadosEstruturados } from '@/lib/seo';
 import './globals.css';
 
 const zilla = Zilla_Slab({
@@ -26,10 +26,8 @@ const source = Source_Sans_3({
   variable: '--font-source',
 });
 
-const url = urlDoSite();
-
 export const metadata: Metadata = {
-  ...(url ? { metadataBase: new URL(url) } : {}),
+  metadataBase: baseDosMetadados(),
   title: 'Mitata Alimentos | Atacado de carnes no Vale do Paraíba',
   description:
     'Atacado de bovinos, suínos, aves e linguiças em São José dos Campos, com entrega diária em todo o Vale do Paraíba. Peça sua cotação pelo WhatsApp.',
@@ -40,6 +38,7 @@ export const metadata: Metadata = {
     title: 'Mitata Alimentos | Atacado de carnes no Vale do Paraíba',
     description: 'Atacado de bovinos, suínos, aves e linguiças com entrega diária em todo o Vale do Paraíba.',
   },
+  twitter: { card: 'summary_large_image' },
 };
 
 const marcarJs = "document.documentElement.classList.add('js')";

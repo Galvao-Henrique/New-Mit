@@ -6,6 +6,10 @@ import { fotos } from '@/data/fotos';
 export const metadata: Metadata = {
   title: `${institucional.creditos.titulo} | Mitata Alimentos`,
   description: institucional.creditos.intro,
+  openGraph: {
+    title: `${institucional.creditos.titulo} | Mitata Alimentos`,
+    description: institucional.creditos.intro,
+  },
 };
 
 export default function Creditos() {

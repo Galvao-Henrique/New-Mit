@@ -5,6 +5,10 @@ import { institucional } from '@/content/institucional';
 export const metadata: Metadata = {
   title: `${institucional.privacidade.titulo} | Mitata Alimentos`,
   description: institucional.privacidade.intro,
+  openGraph: {
+    title: `${institucional.privacidade.titulo} | Mitata Alimentos`,
+    description: institucional.privacidade.intro,
+  },
 };
 
 export default function Privacidade() {

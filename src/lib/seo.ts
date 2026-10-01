@@ -1,10 +1,25 @@
 import { pendente, site } from '@/config/site';
 
 /** Endereço público do site, sem barra no final; `null` enquanto o domínio estiver pendente. */
-export function urlDoSite(): string | null {
-  if (pendente(site.dominio)) return null;
-  const dominio = site.dominio.replace(/\/+$/, '');
+export function urlDoSite(dominioConfigurado: string = site.dominio): string | null {
+  if (pendente(dominioConfigurado)) return null;
+  const dominio = dominioConfigurado.replace(/\/+$/, '');
   return /^https?:\/\//.test(dominio) ? dominio : `https://${dominio}`;
+}
+
+/**
+ * Base para resolver as URLs dos metadados (og:image etc.): o domínio, quando definido;
+ * senão o domínio de produção da Vercel, se existir; senão o endereço local de testes.
+ */
+export function baseDosMetadados(
+  env: Record<string, string | undefined> = process.env,
+  dominioConfigurado: string = site.dominio,
+): URL {
+  const url = urlDoSite(dominioConfigurado);
+  if (url) return new URL(url);
+  const vercel = env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercel) return new URL(`https://${vercel}`);
+  return new URL('http://localhost:3217');
 }
 
 /** Dados estruturados (LocalBusiness). Campos pendentes ou desconhecidos ficam de fora. */
