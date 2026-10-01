@@ -10,7 +10,14 @@ import { MenuCelular } from './MenuCelular';
 
 const focoDourado = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado';
 
-export function Topo() {
+type TopoProps = {
+  /** Mostra o botão "Cotação (n)"; só onde o painel de cotação está montado. */
+  comCotacao?: boolean;
+  /** Prefixo dos links de âncora: "" na página inicial, "/" nas demais. */
+  base?: string;
+};
+
+export function Topo({ comCotacao = true, base = '' }: TopoProps) {
   const [solido, setSolido] = useState(false);
   const quantidade = useCotacao((estado) => estado.itens.length);
   const abrirPainel = useCotacao((estado) => estado.abrirPainel);
@@ -28,7 +35,11 @@ export function Topo() {
       className="fixed inset-x-0 top-0 z-40 h-16 border-b border-transparent bg-transparent transition-colors duration-300 data-[solido=true]:border-creme/10 data-[solido=true]:bg-marinho/95 data-[solido=true]:backdrop-blur md:h-20"
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-10">
-        <a href="#inicio" aria-label="Mitata Alimentos, início" className={`shrink-0 rounded-sm ${focoDourado}`}>
+        <a
+          href={`${base}#inicio`}
+          aria-label="Mitata Alimentos, início"
+          className={`shrink-0 rounded-sm ${focoDourado}`}
+        >
           <Logo versao="creme" formato="horizontal" className="h-8 w-auto sm:h-10" />
         </a>
 
@@ -36,7 +47,7 @@ export function Topo() {
           {home.navegacao.map((item) => (
             <a
               key={item.href}
-              href={item.href}
+              href={`${base}${item.href}`}
               className={`inline-flex min-h-11 items-center font-texto text-sm font-semibold uppercase tracking-[0.2em] text-creme transition-colors hover:text-dourado ${focoDourado}`}
             >
               {item.rotulo}
@@ -45,15 +56,17 @@ export function Topo() {
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
-          <button
-            type="button"
-            onClick={abrirPainel}
-            data-cotacao-topo=""
-            aria-label={`Cotação (${quantidade}): abrir lista de cotação`}
-            className={`inline-flex min-h-11 items-center rounded-sm border border-dourado px-3 font-texto text-sm font-semibold text-creme transition-colors hover:bg-dourado hover:text-marinho sm:px-4 ${focoDourado}`}
-          >
-            Cotação ({quantidade})
-          </button>
+          {comCotacao && (
+            <button
+              type="button"
+              onClick={abrirPainel}
+              data-cotacao-topo=""
+              aria-label={`Cotação (${quantidade}): abrir lista de cotação`}
+              className={`inline-flex min-h-11 items-center rounded-sm border border-dourado px-3 font-texto text-sm font-semibold text-creme transition-colors hover:bg-dourado hover:text-marinho sm:px-4 ${focoDourado}`}
+            >
+              Cotação ({quantidade})
+            </button>
+          )}
           <a
             href={whatsappUrl()}
             target="_blank"
@@ -63,7 +76,7 @@ export function Topo() {
           >
             <WhatsappLogo size={26} weight="fill" aria-hidden="true" />
           </a>
-          <MenuCelular />
+          <MenuCelular base={base} />
         </div>
       </div>
     </header>

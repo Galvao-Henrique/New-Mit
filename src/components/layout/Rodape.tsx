@@ -11,7 +11,7 @@ const link = `${linkBase} text-base`;
 const linkPequeno = `${linkBase} text-sm`;
 const titulo = 'font-texto text-[13px] font-semibold uppercase tracking-[0.3em] text-dourado';
 
-export function Rodape() {
+export function Rodape({ base = '' }: { base?: string }) {
   const { rodape } = home;
   const novaAba = <span className="sr-only"> {rodape.abreNovaAba}</span>;
   return (
@@ -27,7 +27,7 @@ export function Rodape() {
           <ul className="mt-4 grid gap-1">
             {home.navegacao.map((item) => (
               <li key={item.href}>
-                <a href={item.href} className={link}>
+                <a href={`${base}${item.href}`} className={link}>
                   {item.rotulo}
                 </a>
               </li>

@@ -14,6 +14,7 @@
     "prints": "playwright test --project=prints",
     "fotos": "node scripts/baixar-fotos.mjs",
     "logo": "node scripts/logo-creme.mjs",
+    "og": "node scripts/og.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Source_Sans_3, Zilla_Slab } from 'next/font/google';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { dadosEstruturados, urlDoSite } from '@/lib/seo';
 import './globals.css';
 
 const zilla = Zilla_Slab({
@@ -24,9 +26,20 @@ const source = Source_Sans_3({
   variable: '--font-source',
 });
 
+const url = urlDoSite();
+
 export const metadata: Metadata = {
-  title: 'Mitata Alimentos | Atacado de carnes em São José dos Campos',
-  description: 'Atacado de bovinos, suínos, aves e linguiças com entrega diária no Vale do Paraíba.',
+  ...(url ? { metadataBase: new URL(url) } : {}),
+  title: 'Mitata Alimentos | Atacado de carnes no Vale do Paraíba',
+  description:
+    'Atacado de bovinos, suínos, aves e linguiças em São José dos Campos, com entrega diária em todo o Vale do Paraíba. Peça sua cotação pelo WhatsApp.',
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'Mitata Alimentos',
+    title: 'Mitata Alimentos | Atacado de carnes no Vale do Paraíba',
+    description: 'Atacado de bovinos, suínos, aves e linguiças com entrega diária em todo o Vale do Paraíba.',
+  },
 };
 
 const marcarJs = "document.documentElement.classList.add('js')";
@@ -37,7 +50,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: marcarJs }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <JsonLd dados={dadosEstruturados()} />
+        {children}
+      </body>
     </html>
   );
 }

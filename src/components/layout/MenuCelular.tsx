@@ -5,7 +5,7 @@ import { List, X } from '@phosphor-icons/react/dist/ssr';
 import { useState } from 'react';
 import { home } from '@/content/home';
 
-export function MenuCelular() {
+export function MenuCelular({ base = '' }: { base?: string }) {
   const [aberto, setAberto] = useState(false);
 
   return (
@@ -37,7 +37,7 @@ export function MenuCelular() {
             {home.navegacao.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                href={`${base}${item.href}`}
                 onClick={() => setAberto(false)}
                 className="flex min-h-14 items-center border-b border-creme/15 font-titulo text-xl font-semibold uppercase tracking-[0.15em] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado"
               >
