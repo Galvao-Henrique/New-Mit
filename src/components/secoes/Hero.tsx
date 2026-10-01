@@ -29,7 +29,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="flex items-center px-4 py-14 sm:px-6 lg:order-1 lg:py-24 lg:pt-36 lg:pl-10 lg:pr-16 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
+      <div className="flex items-center px-4 pb-20 pt-14 sm:px-6 sm:pb-24 lg:order-1 lg:py-24 lg:pt-36 lg:pl-10 lg:pr-16 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]">
         <Revelar className="max-w-xl">
           <Rotulo tom="escuro">{hero.rotulo}</Rotulo>
           <h1

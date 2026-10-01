@@ -37,6 +37,8 @@ for (const largura of [390, 768, 1440]) {
     for (let y = 0; y < altura; y += ALTURA_FAIXA) {
       // Rolar até a faixa mantém as fotos preguiçosas e as revelações dessa região carregadas.
       await page.evaluate((destino) => window.scrollTo({ top: destino, behavior: 'instant' }), y);
+      // O topo é fixo e apareceria de novo no meio da página a cada emenda: só a primeira faixa o mostra.
+      if (y > 0) await page.addStyleTag({ content: 'header { visibility: hidden !important; }' });
       await page.waitForTimeout(300);
       const input = await page.screenshot({
         type: 'png',

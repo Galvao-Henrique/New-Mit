@@ -31,18 +31,23 @@ test.describe('movimento reduzido', () => {
   });
 });
 
-test('contadores animam até o valor final', async ({ page }) => {
+test('contadores animam até o valor final, passando por valores intermediários', async ({ page }) => {
+  // Relógio falso instalado antes da página: o tempo só anda quando o teste manda.
+  await page.clock.install();
   await abrirHidratada(page);
   const contadores = page.locator('#essencia [data-contador]');
   // Abaixo da tela na montagem: o contador já foi a 0.
   await expect(contadores.first()).toHaveText('0 anos');
   await page.evaluate(() => document.querySelector('#essencia')?.scrollIntoView({ behavior: 'instant' }));
-  await page.waitForTimeout(150);
-  // A animação dura 1,2s: aos 150ms ainda não chegou ao valor final.
-  await expect(contadores.first()).not.toHaveText('50 anos', { timeout: 500 });
-  await expect(contadores.first()).toHaveText('50 anos', { timeout: 3000 });
-  await expect(contadores.nth(1)).toHaveText('+20', { timeout: 3000 });
-  await expect(contadores.nth(2)).toHaveText('+100', { timeout: 3000 });
+  await page.clock.runFor(400);
+  // A animação dura 1,2s: aos 400ms o valor está entre 0 e 50.
+  const meio = Number.parseInt((await contadores.first().textContent()) ?? '', 10);
+  expect(meio).toBeGreaterThan(0);
+  expect(meio).toBeLessThan(50);
+  await page.clock.runFor(1500);
+  await expect(contadores.first()).toHaveText('50 anos');
+  await expect(contadores.nth(1)).toHaveText('+20');
+  await expect(contadores.nth(2)).toHaveText('+100');
 });
 
 test.describe('sem JavaScript', () => {

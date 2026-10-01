@@ -33,14 +33,16 @@ test('pular para o conteúdo', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Pular para o conteúdo' })).toBeFocused();
 });
 
-test('nada passa da borda', async ({ page }) => {
+for (const caminho of ['/', '/creditos', '/privacidade']) {
   for (const largura of [320, 390, 768, 1440]) {
-    await page.setViewportSize({ width: largura, height: 900 });
-    await page.goto('/');
-    const cabe = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-    expect(cabe, `largura ${largura}`).toBe(true);
+    test(`nada passa da borda em ${caminho} a ${largura}px`, async ({ page }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto(caminho);
+      const cabe = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+      expect(cabe).toBe(true);
+    });
   }
-});
+}
 
 test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false });

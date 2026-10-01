@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { MagnifyingGlass, SquaresFour } from '@phosphor-icons/react/dist/ssr';
 import { useMemo, useRef, useState } from 'react';
