@@ -11,10 +11,26 @@ async function abrirInicio(page: Page) {
   await expect(page.locator('#peca-pa')).toHaveAttribute('aria-pressed', 'false');
 }
 
+// Movimento reduzido mostra tudo no estado final: sem isso, os [data-reveal] abaixo da dobra ficam com
+// opacity 0 até serem rolados e o axe não mediria o contraste deles.
+test.use({ reducedMotion: 'reduce' });
+
+/*
+ * Verificação manual conhecida: o axe devolve "incomplete" (não decide) para texto sobre foto ou degradê,
+ * porque não consegue calcular o fundo: o link "Contato" do topo e o texto dos diferenciais sobre o degradê do
+ * hero, e os rótulos dos cartões de categoria do catálogo (BOVINOS, SUÍNOS, AVES, LINGUIÇAS) sobre a foto.
+ * Esses trechos são conferidos a olho nos prints (docs/prints), com véu marinho por trás do texto.
+ */
+
 /** Roda o axe e devolve só o que é grave, em texto legível para a mensagem de falha. */
 async function violacoesGraves(page: Page) {
-  // Revelações ao rolar são transições de opacidade: medir o contraste no meio delas dá falso alarme.
+  // Revelações são transições de opacidade: medir o contraste no meio delas dá falso alarme.
   await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))));
+  const translucidos = await page.evaluate(
+    () =>
+      [...document.querySelectorAll('[data-reveal]')].filter((el) => Number(getComputedStyle(el).opacity) < 1).length,
+  );
+  expect(translucidos, 'elementos [data-reveal] ainda com opacidade menor que 1').toBe(0);
   const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   return violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
@@ -43,8 +59,6 @@ for (const largura of LARGURAS) {
         .click();
       await page.getByRole('button', { name: 'Ver cotação' }).click();
       await expect(page.getByRole('dialog', { name: 'Sua lista de cotação' })).toBeVisible();
-      // Espera a animação de entrada do painel acabar, para o axe medir o contraste do estado final.
-      await page.waitForTimeout(600);
       expect(await violacoesGraves(page)).toEqual([]);
     });
 
@@ -53,7 +67,6 @@ for (const largura of LARGURAS) {
       await page.locator('#peca-pa').focus();
       await page.keyboard.press('Enter');
       await expect(page.locator('#peca-pa')).toHaveAttribute('aria-pressed', 'true');
-      await page.waitForTimeout(600);
       expect(await violacoesGraves(page)).toEqual([]);
     });
   });
