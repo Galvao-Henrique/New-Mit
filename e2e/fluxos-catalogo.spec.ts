@@ -43,10 +43,10 @@ test('busca vazia', async ({ page }) => {
   await campo.fill('xyz');
   await expect(catalogo(page).getByText('Nenhum corte encontrado para “xyz”.')).toBeVisible();
   await catalogo(page).getByRole('button', { name: 'Limpar busca' }).click();
-  await expect(cards(page)).toHaveCount(24);
+  await expect(cards(page)).toHaveCount(9);
   await expect(campo).toHaveValue('');
   await expect(campo).toBeFocused();
-  await expect(catalogo(page).getByText('24 cortes', { exact: true })).toBeVisible();
+  await expect(catalogo(page).getByText('Mostrando 1–9 de 24 cortes', { exact: true })).toBeVisible();
 });
 
 test('corte sem foto própria mostra a silhueta e nenhuma imagem', async ({ page }) => {
@@ -58,6 +58,7 @@ test('corte sem foto própria mostra a silhueta e nenhuma imagem', async ({ page
 
 test('corte com foto própria continua com a foto', async ({ page }) => {
   await abrir(page);
+  await catalogo(page).getByLabel('Buscar corte').fill('nuggets');
   const card = catalogo(page).locator('article', { has: page.getByRole('heading', { name: 'Nuggets de Frango' }) });
   await expect(card.locator('[data-midia="foto"] img')).toHaveCount(1);
   await expect(card.locator('svg[data-silhueta]')).toHaveCount(0);
@@ -66,15 +67,15 @@ test('corte com foto própria continua com a foto', async ({ page }) => {
 test('adicionar e remover', async ({ page }) => {
   await abrir(page);
   await adicionar(page, 'Boi Casado');
-  await adicionar(page, 'Moela');
+  await adicionar(page, 'Pá de Boi');
   await expect(botaoTopo(page)).toContainText('Cotação (2)');
   await expect(page.getByText('2 itens na cotação')).toBeVisible();
 
   await page.getByRole('button', { name: 'Ver cotação' }).click();
   const painel = page.getByRole('dialog', { name: 'Sua lista de cotação' });
   await expect(painel).toBeVisible();
-  await painel.getByRole('button', { name: /Remover Moela/ }).click();
-  await expect(painel.getByText('Moela')).toHaveCount(0);
+  await painel.getByRole('button', { name: /Remover Pá de Boi/ }).click();
+  await expect(painel.getByText('Pá de Boi')).toHaveCount(0);
   await expect(botaoTopo(page)).toContainText('Cotação (1)');
 });
 
@@ -158,4 +159,89 @@ test('sem erros no console ao carregar com lista salva', async ({ page }) => {
   await abrir(page);
   await expect(botaoTopo(page)).toContainText('Cotação (1)');
   expect(erros).toEqual([]);
+});
+
+test.describe('paginação', () => {
+  const pagina = (page: Page) => catalogo(page).getByRole('navigation', { name: 'Páginas do catálogo' });
+  const resumo = (page: Page, texto: string) => catalogo(page).getByText(texto, { exact: true });
+
+  test('9, 9 e 6 cortes por página, com Próxima e números', async ({ page }) => {
+    await abrir(page);
+    await expect(cards(page)).toHaveCount(9);
+    await expect(resumo(page, 'Mostrando 1–9 de 24 cortes')).toBeVisible();
+    await expect(pagina(page).getByRole('button', { name: 'Anterior' })).toBeDisabled();
+    await expect(pagina(page).getByRole('button', { name: 'Página 1' })).toHaveAttribute('aria-current', 'page');
+
+    await pagina(page).getByRole('button', { name: 'Próxima' }).click();
+    await expect(cards(page)).toHaveCount(9);
+    await expect(resumo(page, 'Mostrando 10–18 de 24 cortes')).toBeVisible();
+    await expect(pagina(page).getByRole('button', { name: 'Página 2' })).toHaveAttribute('aria-current', 'page');
+    await expect(pagina(page).getByRole('button', { name: 'Página 1' })).not.toHaveAttribute('aria-current', 'page');
+
+    await pagina(page).getByRole('button', { name: 'Página 3' }).click();
+    await expect(cards(page)).toHaveCount(6);
+    await expect(resumo(page, 'Mostrando 19–24 de 24 cortes')).toBeVisible();
+    await expect(pagina(page).getByRole('button', { name: 'Próxima' })).toBeDisabled();
+
+    await pagina(page).getByRole('button', { name: 'Anterior' }).click();
+    await expect(pagina(page).getByRole('button', { name: 'Página 2' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  test('filtro Aves (8) não mostra a paginação', async ({ page }) => {
+    await abrir(page);
+    await catalogo(page).getByRole('button', { name: 'Aves', exact: true }).click();
+    await expect(cards(page)).toHaveCount(8);
+    await expect(pagina(page)).toHaveCount(0);
+  });
+
+  test('buscar na página 3 volta para a página 1', async ({ page }) => {
+    await abrir(page);
+    await pagina(page).getByRole('button', { name: 'Página 3' }).click();
+    await expect(cards(page)).toHaveCount(6);
+    await catalogo(page).getByLabel('Buscar corte').fill('a');
+    await expect(pagina(page).getByRole('button', { name: 'Página 1' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  test('trocar de categoria na página 2 volta para a página 1', async ({ page }) => {
+    await abrir(page);
+    await pagina(page).getByRole('button', { name: 'Próxima' }).click();
+    await catalogo(page).getByRole('button', { name: 'Todos', exact: true }).click();
+    await expect(pagina(page).getByRole('button', { name: 'Página 1' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  test('ao mudar de página o foco vai para o resumo dos resultados', async ({ page }) => {
+    await abrir(page);
+    await pagina(page).getByRole('button', { name: 'Próxima' }).click();
+    await expect(resumo(page, 'Mostrando 10–18 de 24 cortes')).toBeFocused();
+  });
+
+  test.describe('celular', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('dois cards lado a lado', async ({ page }) => {
+      await abrir(page);
+      const a = await cards(page).nth(0).boundingBox();
+      const b = await cards(page).nth(1).boundingBox();
+      expect(Math.abs(a!.y - b!.y)).toBeLessThan(1);
+      expect(b!.x).toBeGreaterThan(a!.x + a!.width - 1);
+    });
+
+    test('card sozinho na última linha fica centralizado, com a largura normal', async ({ page }) => {
+      await abrir(page);
+      await catalogo(page).getByRole('button', { name: 'Bovinos', exact: true }).click();
+      await expect(cards(page)).toHaveCount(7);
+      const itens = catalogo(page).locator('article');
+      const primeiro = await itens.nth(0).boundingBox();
+      const ultimo = await itens.nth(6).boundingBox();
+      expect(Math.abs(ultimo!.width - primeiro!.width)).toBeLessThan(1);
+      expect(Math.abs(ultimo!.x + ultimo!.width / 2 - 390 / 2)).toBeLessThan(1);
+    });
+
+    test('botão do card tem 44px ou mais e o nome acessível completo', async ({ page }) => {
+      await abrir(page);
+      const botao = catalogo(page).getByRole('button', { name: 'Adicionar à cotação: Boi Casado' });
+      await expect(botao.locator('span:visible')).toHaveText('Adicionar');
+      expect((await botao.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    });
+  });
 });

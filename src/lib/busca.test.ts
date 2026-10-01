@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { cortes } from '@/data/cortes';
-import { filtrarCortes, normalizar } from './busca';
+import { filtrarCortes, normalizar, paginar, POR_PAGINA, totalDePaginas } from './busca';
 
 describe('normalizar', () => {
   it('remove acentos e deixa em minúsculas', () => {
@@ -35,5 +35,27 @@ describe('filtrarCortes', () => {
   it('combina categoria e busca', () => {
     expect(filtrarCortes(cortes, 'suinos', 'pernil')).toHaveLength(2);
     expect(filtrarCortes(cortes, 'aves', 'pernil')).toHaveLength(0);
+  });
+});
+
+describe('paginação', () => {
+  it('calcula páginas com no mínimo 1', () => {
+    expect(totalDePaginas(24, 9)).toBe(3);
+    expect(totalDePaginas(9, 9)).toBe(1);
+    expect(totalDePaginas(10, 9)).toBe(2);
+    expect(totalDePaginas(0, 9)).toBe(1);
+  });
+
+  it('recorta a página pedida', () => {
+    expect(paginar([1, 2, 3, 4, 5], 2, 2)).toEqual([3, 4]);
+    expect(paginar([1, 2, 3, 4, 5], 3, 2)).toEqual([5]);
+  });
+
+  it('divide os 24 cortes em 9, 9 e 6', () => {
+    expect([1, 2, 3].map((p) => paginar(cortes, p, POR_PAGINA).length)).toEqual([9, 9, 6]);
+  });
+
+  it('página fora do intervalo vem vazia', () => {
+    expect(paginar([1, 2, 3], 5, 2)).toEqual([]);
   });
 });

@@ -23,28 +23,26 @@ export function CardCorte({ corte, foto }: CardCorteProps) {
     <article className="flex w-full flex-col overflow-hidden rounded-sm border border-creme/10 bg-marinho-superficie">
       <div data-midia={foto ? 'foto' : 'silhueta'} className="relative aspect-[4/3] bg-marinho-superficie">
         {foto ? (
-          <Foto
-            foto={foto}
-            decorativa
-            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-          />
+          <Foto foto={foto} decorativa sizes="(min-width: 1280px) 380px, (min-width: 768px) 30vw, 50vw" />
         ) : (
-          <div className="absolute inset-3 flex items-center justify-center rounded-sm border border-dourado/25 bg-[radial-gradient(ellipse_at_center,rgb(201_164_92/0.1),transparent_70%)]">
+          <div className="absolute inset-2 flex md:inset-3 items-center justify-center rounded-sm border border-dourado/25 bg-[radial-gradient(ellipse_at_center,rgb(201_164_92/0.1),transparent_70%)]">
             <SilhuetaCategoria categoria={corte.categoria} className="w-3/4" />
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-titulo text-xl font-bold leading-snug text-creme">{corte.nome}</h3>
-        <p className="mb-5 mt-1 font-texto text-base text-creme/75">{corte.subcategoria}</p>
+      <div className="flex flex-1 flex-col p-3 md:p-5">
+        <h3 className="break-words font-titulo text-base font-bold leading-snug text-creme md:text-xl">{corte.nome}</h3>
+        <p className="mb-3 mt-1 font-texto text-sm text-creme/75 md:mb-5 md:text-base">{corte.subcategoria}</p>
         <Botao
           variante={naCotacao ? 'contorno' : 'primario'}
           onClick={() => alternar(corte)}
           rotuloAcessivel={`${texto}: ${corte.nome}`}
           pressionado={naCotacao}
-          className="mt-auto w-full"
+          className="mt-auto w-full px-2! md:px-6!"
         >
-          {texto}
+          {/* O nome acessível (aria-label) é sempre o completo e contém a palavra visível. */}
+          <span className="md:hidden">{naCotacao ? catalogo.removerCurto : catalogo.adicionarCurto}</span>
+          <span className="hidden md:inline">{texto}</span>
         </Botao>
       </div>
     </article>

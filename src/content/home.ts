@@ -46,6 +46,12 @@ export const home = {
     limparBusca: 'Limpar busca',
     adicionar: 'Adicionar à cotação',
     remover: 'Remover da cotação',
+    adicionarCurto: 'Adicionar',
+    removerCurto: 'Remover',
+    paginacao: 'Páginas do catálogo',
+    anterior: 'Anterior',
+    proxima: 'Próxima',
+    pagina: 'Página',
   },
   compromisso: {
     rotulo: 'Sobre a Mitata',
@@ -112,6 +118,14 @@ export const home = {
 
 export function contagemCortes(n: number): string {
   return `${n} ${n === 1 ? 'corte' : 'cortes'}`;
+}
+
+/** "N cortes" quando tudo cabe numa página; senão "Mostrando 1–9 de 24 cortes". */
+export function resumoDaPagina(pagina: number, porPagina: number, total: number): string {
+  if (total <= porPagina) return contagemCortes(total);
+  const inicio = (pagina - 1) * porPagina + 1;
+  const fim = Math.min(pagina * porPagina, total);
+  return `Mostrando ${inicio}–${fim} de ${contagemCortes(total)}`;
 }
 
 export function contagemItens(n: number): string {
