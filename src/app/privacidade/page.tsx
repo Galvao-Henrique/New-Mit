@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import { PaginaSecundaria } from '@/components/layout/PaginaSecundaria';
 import { institucional } from '@/content/institucional';
+import { openGraphDaPagina } from '@/lib/og';
 
 export const metadata: Metadata = {
   title: `${institucional.privacidade.titulo} | Mitata Alimentos`,
   description: institucional.privacidade.intro,
-  openGraph: {
-    title: `${institucional.privacidade.titulo} | Mitata Alimentos`,
-    description: institucional.privacidade.intro,
-  },
+  openGraph: openGraphDaPagina(
+    `${institucional.privacidade.titulo} | Mitata Alimentos`,
+    institucional.privacidade.intro,
+  ),
 };
 
 export default function Privacidade() {

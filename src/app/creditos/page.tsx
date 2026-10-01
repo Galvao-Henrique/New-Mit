@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import { PaginaSecundaria } from '@/components/layout/PaginaSecundaria';
 import { institucional } from '@/content/institucional';
 import { fotos } from '@/data/fotos';
+import { openGraphDaPagina } from '@/lib/og';
 
 export const metadata: Metadata = {
   title: `${institucional.creditos.titulo} | Mitata Alimentos`,
   description: institucional.creditos.intro,
-  openGraph: {
-    title: `${institucional.creditos.titulo} | Mitata Alimentos`,
-    description: institucional.creditos.intro,
-  },
+  openGraph: openGraphDaPagina(`${institucional.creditos.titulo} | Mitata Alimentos`, institucional.creditos.intro),
 };
 
 export default function Creditos() {

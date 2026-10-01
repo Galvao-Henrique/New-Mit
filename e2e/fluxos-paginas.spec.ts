@@ -49,6 +49,17 @@ test('sitemap sem domínio é vazio e robots libera tudo', async ({ request }) =
   expect(texto).not.toContain('Sitemap');
 });
 
+test('créditos e privacidade têm Open Graph próprio e mantêm a imagem', async ({ page }) => {
+  for (const [rota, titulo] of [
+    ['/creditos', 'Créditos das fotos | Mitata Alimentos'],
+    ['/privacidade', 'Privacidade | Mitata Alimentos'],
+  ]) {
+    await page.goto(rota);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', titulo);
+    await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
+  }
+});
+
 test('JSON-LD LocalBusiness e imagem de compartilhamento na página inicial', async ({ page }) => {
   await page.goto('/');
   const json = await page.locator('script[type="application/ld+json"]').first().textContent();
