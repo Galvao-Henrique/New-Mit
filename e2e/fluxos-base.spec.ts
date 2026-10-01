@@ -76,6 +76,8 @@ test.describe('sem JavaScript', () => {
     const titulo = page.locator('h1');
     await expect(titulo).toBeVisible();
     await expect(titulo).toHaveCSS('opacity', '1');
+    // Sem o script do <head> não há data-rolado: o topo fica sempre sólido, legível sobre as seções creme.
+    await expect.poll(() => fundoDoTopo(page)).not.toBe(TRANSPARENTE);
   });
 });
 
@@ -91,6 +93,9 @@ test.describe('scripts do Next com falha (sem hidratação)', () => {
     for (const alvo of alvos) {
       await expect.poll(() => opacidadeVisivel(alvo), { timeout: 5_000 }).toBe(1);
     }
+    // O topo continua guiado pela rolagem (data-rolado): no alto da página, transparente sobre o hero.
+    await expect(page.locator('html')).not.toHaveAttribute('data-rolado');
+    expect(await fundoDoTopo(page)).toBe(TRANSPARENTE);
   });
 
   test('link direto para #contato: o topo já fica sólido', async ({ page }) => {

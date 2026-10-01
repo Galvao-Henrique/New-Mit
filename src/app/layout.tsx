@@ -48,16 +48,18 @@ export const metadata: Metadata = {
 /**
  * Roda no <head>, antes dos scripts do Next:
  * - põe `js` no <html>: o CSS só esconde as revelações quando há JavaScript;
- * - se a hidratação não avisar em 3 s (MarcaHidratacao), tira o `js`: um script que falhou (rede ruim,
- *   navegador antigo, extensão) não deixa as seções invisíveis;
+ * - se a hidratação não avisar em 3 s (MarcaHidratacao), troca `js` por `sem-hidratacao`: um script que
+ *   falhou (rede ruim, navegador antigo, extensão) não deixa as seções invisíveis;
  * - marca `data-rolado` no <html> com a página rolada, também num link direto (/#contato) ou ao recarregar
- *   no meio da página, para o topo ficar sólido e legível sem esperar o React.
+ *   no meio da página, para o topo ficar sólido e legível sem esperar o React (e mesmo sem ele).
  */
 const scriptDoHead = `(function () {
   var html = document.documentElement;
   html.classList.add('js');
   setTimeout(function () {
-    if (!window.__hidratado) html.classList.remove('js');
+    if (window.__hidratado) return;
+    html.classList.remove('js');
+    html.classList.add('sem-hidratacao');
   }, 3000);
   var rolado;
   function marcarRolagem() {

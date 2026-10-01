@@ -68,16 +68,17 @@ body {
 
 /*
   Topo fixo: transparente no alto da página e sólido com ela rolada. O data-rolado vem do script do <head>
-  (layout.tsx), que funciona antes do React e num link direto como /#contato; sem JavaScript, fica sempre sólido.
+  (layout.tsx), que funciona antes do React, sem ele e num link direto como /#contato. Sem JavaScript
+  nenhum (nem `js` nem `sem-hidratacao` no <html>), o topo fica sempre sólido.
 */
 html[data-rolado] [data-topo],
-html:not(.js) [data-topo] {
+html:not(.js):not(.sem-hidratacao) [data-topo] {
   @apply border-creme/10 bg-marinho/95 backdrop-blur;
 }
 
 /*
-  Revelação ao rolar: só esconde quando o JavaScript está ativo. Se a hidratação falhar, o script do <head>
-  tira o `js` em 3 s e tudo aparece. A primeira dobra (hero, diferenciais) não usa revelação.
+  Revelação ao rolar: só esconde quando o JavaScript está ativo. Se a hidratação não avisar em 3 s, o script
+  do <head> tira o `js` e tudo aparece. A primeira dobra (hero, diferenciais) não usa revelação.
 */
 html.js [data-reveal] {
   opacity: 0;
