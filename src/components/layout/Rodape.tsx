@@ -6,7 +6,9 @@ import { whatsappUrl } from '@/lib/whatsapp';
 import { AnoAtual } from './AnoAtual';
 
 const foco = 'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-dourado';
-const link = `inline-flex min-h-11 items-center gap-3 font-texto text-base text-creme transition-colors hover:text-dourado ${foco}`;
+const linkBase = `inline-flex min-h-11 items-center gap-3 font-texto text-creme transition-colors hover:text-dourado ${foco}`;
+const link = `${linkBase} text-base`;
+const linkPequeno = `${linkBase} text-sm`;
 const titulo = 'font-texto text-[13px] font-semibold uppercase tracking-[0.3em] text-dourado';
 
 export function Rodape() {
@@ -20,8 +22,8 @@ export function Rodape() {
           <p className="mt-6 max-w-xs font-texto text-base leading-relaxed text-creme/85">{rodape.resumo}</p>
         </div>
 
-        <nav aria-label={rodape.rotuloMenu}>
-          <p className={titulo}>Menu</p>
+        <nav aria-label={rodape.rotuloNav}>
+          <p className={titulo}>{rodape.tituloMenu}</p>
           <ul className="mt-4 grid gap-1">
             {home.navegacao.map((item) => (
               <li key={item.href}>
@@ -69,12 +71,12 @@ export function Rodape() {
           </p>
           <ul className="flex flex-wrap gap-x-6">
             <li>
-              <a href="/creditos" className={`${link} text-sm`}>
+              <a href="/creditos" className={linkPequeno}>
                 {rodape.creditos}
               </a>
             </li>
             <li>
-              <a href="/privacidade" className={`${link} text-sm`}>
+              <a href="/privacidade" className={linkPequeno}>
                 {rodape.privacidade}
               </a>
             </li>

@@ -1,9 +1,12 @@
 import { mkdirSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+import sharp from 'sharp';
 
 test.use({ reducedMotion: 'reduce' });
 
 const etapa = process.env.ETAPA ?? 'x';
+/** O Chromium corrompe capturas de página inteira acima de ~16384px: a página sai em faixas e é costurada. */
+const ALTURA_FAIXA = 6000;
 
 for (const largura of [390, 768, 1440]) {
   test(`print ${largura}`, async ({ page }) => {
@@ -28,7 +31,25 @@ for (const largura of [390, 768, 1440]) {
         ),
       ),
     );
-    await page.screenshot({ path: `${pasta}/${largura}.jpg`, type: 'jpeg', quality: 80, fullPage: true });
-    expect(true).toBe(true);
+
+    const altura = await page.evaluate(() => document.documentElement.scrollHeight);
+    const faixas: { input: Buffer; top: number; left: number }[] = [];
+    for (let y = 0; y < altura; y += ALTURA_FAIXA) {
+      // Rolar até a faixa mantém as fotos preguiçosas e as revelações dessa região carregadas.
+      await page.evaluate((destino) => window.scrollTo({ top: destino, behavior: 'instant' }), y);
+      await page.waitForTimeout(300);
+      const input = await page.screenshot({
+        type: 'png',
+        fullPage: true,
+        clip: { x: 0, y, width: largura, height: Math.min(ALTURA_FAIXA, altura - y) },
+      });
+      faixas.push({ input, top: y, left: 0 });
+    }
+
+    await sharp({ create: { width: largura, height: altura, channels: 3, background: '#ffffff' } })
+      .composite(faixas)
+      .jpeg({ quality: 80 })
+      .toFile(`${pasta}/${largura}.jpg`);
+    expect(faixas.length).toBeGreaterThan(0);
   });
 }

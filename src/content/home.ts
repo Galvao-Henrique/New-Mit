@@ -90,7 +90,8 @@ export const home = {
     montarLista: 'ou monte sua lista de cotação',
   },
   rodape: {
-    rotuloMenu: 'Rodapé',
+    rotuloNav: 'Rodapé',
+    tituloMenu: 'Menu',
     abreNovaAba: '(abre em nova aba)',
     resumo: 'Atacado · Entrega diária no Vale do Paraíba',
     creditos: 'Créditos das fotos',
