@@ -9,12 +9,19 @@
  *   </g>
  * Os atributos de apresentação da peça (transform, filter, opacity, style, class…) descem para um
  * `<g>` interno, para o CSS do destaque não brigar com eles.
+ *
+ * Logo depois da raiz entra o `<filter id="mapa-destaque">` do brilho e da sombra da peça ativa: o Safari
+ * ignora as funções de filtro do CSS (drop-shadow, brightness) em elementos do SVG, mas aplica um filtro SVG.
  */
 import { PECAS, type Peca } from '@/data/mapa';
 
 const LIMITE_BYTES = 150 * 1024;
 /** Largura do viewBox em que o destaque (erguer, brilho, foco) foi medido: o do boi provisório. */
 const LARGURA_DE_REFERENCIA = 320;
+/** id do filtro injetado; o desenho não pode usá-lo. */
+export const ID_FILTRO_DESTAQUE = 'mapa-destaque';
+/** Folga em volta do viewBox, nas unidades da referência: cobre o brilho, a sombra e o erguer da peça. */
+const MARGEM_DO_FILTRO = 20;
 
 /** Atributos de uma tag, em qualquer ordem e com aspas simples ou duplas (um `>` entre aspas não fecha a tag). */
 const ATRIBUTOS = `(?:[^>"']|"[^"]*"|'[^']*')*`;
@@ -75,8 +82,10 @@ function escaparAtributo(texto: string): string {
   return texto.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-/** Largura do viewBox; `undefined` se não houver viewBox e `null` se ele não tiver quatro números válidos. */
-function larguraDoViewBox(atributosDaRaiz: string): number | null | undefined {
+type ViewBox = [x: number, y: number, largura: number, altura: number];
+
+/** Os quatro números do viewBox; `undefined` se não houver viewBox e `null` se ele não for válido. */
+function viewBoxDe(atributosDaRaiz: string): ViewBox | null | undefined {
   const m = atributosDaRaiz.match(/(?:^|\s)viewBox\s*=\s*(?:"([^"]*)"|'([^']*)')/);
   if (!m) return undefined;
   const numeros = (m[1] ?? m[2])
@@ -84,12 +93,26 @@ function larguraDoViewBox(atributosDaRaiz: string): number | null | undefined {
     .split(/[\s,]+/)
     .map(Number);
   const valido = numeros.length === 4 && numeros.every(Number.isFinite) && numeros[2] > 0 && numeros[3] > 0;
-  return valido ? numeros[2] : null;
+  return valido ? (numeros as ViewBox) : null;
+}
+
+/** Número curto para atributo: no máximo quatro casas decimais. */
+function numero(valor: number): string {
+  return String(Math.round(valor * 10000) / 10000);
+}
+
+/** Um grupo com `transform` (atributo ou no style) muda as unidades das peças de dentro. */
+function temTransform(atributos: string): boolean {
+  if (/(?:^|\s)transform\s*=/.test(atributos)) return true;
+  const estilo = atributos.match(/(?:^|\s)style\s*=\s*(?:"([^"]*)"|'([^']*)')/);
+  return estilo ? /(?:^|[;\s])transform\s*:/.test(estilo[1] ?? estilo[2]) : false;
 }
 
 interface TrechoDaPeca {
   peca: Peca;
   atributos: string;
+  /** Algum grupo em volta da peça tem transform: a região do filtro, em unidades do viewBox, pode não cobri-la. */
+  dentroDeTransform: boolean;
   /** Início da tag de abertura, fim da abertura, início do `</g>` e fim do `</g>` (iguais para `<g/>`). */
   inicio: number;
   fimDaAbertura: number;
@@ -101,7 +124,13 @@ interface TrechoDaPeca {
 function mapearPecas(svg: string): { trechos: TrechoDaPeca[]; problemas: string[] } {
   const trechos: TrechoDaPeca[] = [];
   const problemas: string[] = [];
-  const pilha: { peca: Peca | null; atributos: string; inicio: number; fimDaAbertura: number }[] = [];
+  const pilha: {
+    peca: Peca | null;
+    atributos: string;
+    dentroDeTransform: boolean;
+    inicio: number;
+    fimDaAbertura: number;
+  }[] = [];
 
   for (const m of svg.matchAll(TAG_G_OU_FIM)) {
     const inicio = m.index;
@@ -115,10 +144,21 @@ function mapearPecas(svg: string): { trechos: TrechoDaPeca[]; problemas: string[
     if (peca && pilha.some((a) => a.peca !== null)) {
       problemas.push(`A peça "peca-${peca}" não pode ficar dentro de outra peça`);
     }
+    const dentroDeTransform = pilha.some((a) => temTransform(a.atributos));
     if (m[1].trimEnd().endsWith('/')) {
-      if (peca) trechos.push({ peca, atributos: m[1], inicio, fimDaAbertura: fim, inicioDoFechamento: fim, fim });
+      if (peca) {
+        trechos.push({
+          peca,
+          atributos: m[1],
+          dentroDeTransform,
+          inicio,
+          fimDaAbertura: fim,
+          inicioDoFechamento: fim,
+          fim,
+        });
+      }
     } else {
-      pilha.push({ peca, atributos: m[1], inicio, fimDaAbertura: fim });
+      pilha.push({ peca, atributos: m[1], dentroDeTransform, inicio, fimDaAbertura: fim });
     }
   }
   for (const aberto of pilha) {
@@ -133,9 +173,9 @@ function validar(original: string, svg: string): string[] {
 
   if (!raiz) problemas.push('O arquivo precisa começar com a tag <svg>');
   else {
-    const largura = larguraDoViewBox(raiz[1]);
-    if (largura === undefined) problemas.push('O SVG precisa de viewBox');
-    else if (largura === null) problemas.push('O viewBox precisa de quatro números (x, y, largura e altura positivas)');
+    const viewBox = viewBoxDe(raiz[1]);
+    if (viewBox === undefined) problemas.push('O SVG precisa de viewBox');
+    else if (viewBox === null) problemas.push('O viewBox precisa de quatro números (x, y, largura e altura positivas)');
   }
 
   if (new TextEncoder().encode(original).length > LIMITE_BYTES) problemas.push('O SVG passa de 150 KB');
@@ -165,6 +205,10 @@ function validar(original: string, svg: string): string[] {
     else if (comId[0][1] !== 'g') problemas.push(`A peça "peca-${p}" precisa ser um grupo <g>`);
   }
 
+  if (tags.some((t) => idDe(t[2]) === ID_FILTRO_DESTAQUE)) {
+    problemas.push(`O id "${ID_FILTRO_DESTAQUE}" é reservado para o destaque do site: use outro id no SVG`);
+  }
+
   problemas.push(...mapearPecas(svg).problemas);
   return problemas;
 }
@@ -172,13 +216,33 @@ function validar(original: string, svg: string): string[] {
 /** Raiz sem width/height e com `--mapa-escala`, que deixa o destaque igual em qualquer tamanho de viewBox. */
 function prepararRaiz(atributos: string, largura: number): string {
   const semTamanho = atributos.replace(new RegExp(`\\s(?:width|height)\\s*=\\s*${VALOR}`, 'g'), '').trimEnd();
-  const escala = `--mapa-escala:${Math.round((largura / LARGURA_DE_REFERENCIA) * 10000) / 10000}`;
+  const escala = `--mapa-escala:${numero(largura / LARGURA_DE_REFERENCIA)}`;
   const estilo = semTamanho.match(/(\sstyle\s*=\s*)(?:"([^"]*)"|'([^']*)')/);
   if (!estilo) return `<svg${semTamanho} style="${escala}">`;
   const aspas = estilo[2] !== undefined ? '"' : "'";
   const atual = (estilo[2] ?? estilo[3]).trim();
   const novo = atual ? `${atual.replace(/;?\s*$/, ';')}${escala}` : escala;
   return `<svg${semTamanho.replace(estilo[0], () => `${estilo[1]}${aspas}${novo}${aspas}`)}>`;
+}
+
+/**
+ * Filtro da peça ativa (o CSS aplica com `filter: url(#mapa-destaque)`): clareia 12%, brilho dourado em volta
+ * e sombra marinho embaixo, os mesmos valores das funções de filtro do CSS. Medidas em unidades do viewBox,
+ * na escala dele; a região é o viewBox com folga, para o brilho e a sombra não serem cortados.
+ */
+function filtroDoDestaque([x, y, largura, altura]: ViewBox): string {
+  const escala = largura / LARGURA_DE_REFERENCIA;
+  const margem = MARGEM_DO_FILTRO * escala;
+  const clarear =
+    '<feFuncR type="linear" slope="1.12"/><feFuncG type="linear" slope="1.12"/><feFuncB type="linear" slope="1.12"/>';
+  return (
+    `<defs><filter id="${ID_FILTRO_DESTAQUE}" filterUnits="userSpaceOnUse" x="${numero(x - margem)}" y="${numero(y - margem)}" ` +
+    `width="${numero(largura + 2 * margem)}" height="${numero(altura + 2 * margem)}" color-interpolation-filters="sRGB">` +
+    `<feComponentTransfer in="SourceGraphic" result="claro">${clarear}</feComponentTransfer>` +
+    `<feDropShadow in="claro" dx="0" dy="0" stdDeviation="${numero(2.5 * escala)}" flood-color="#C9A45C" flood-opacity="0.9" result="brilho"/>` +
+    `<feDropShadow in="brilho" dx="0" dy="${numero(6 * escala)}" stdDeviation="${numero(3 * escala)}" flood-color="#0B1633" flood-opacity="0.35"/>` +
+    '</filter></defs>'
+  );
 }
 
 /** Cópia sem `id`, para não repetir ids na página (as referências url(#…) continuam apontando para o original). */
@@ -197,8 +261,10 @@ function grupoDaPeca(trecho: TrechoDaPeca, filhos: string, rotulo: string): stri
     .trim();
   const desenho = apresentacao ? `<g ${apresentacao}>${filhos}</g>` : filhos;
   const peca = trecho.peca;
+  // Dentro de um grupo com transform, o destaque fica com as funções de filtro do CSS (veja o globals.css).
+  const filtroCss = trecho.dentroDeTransform ? ' data-mapa-filtro="css"' : '';
   return (
-    `<g id="peca-${peca}" role="button" tabindex="0" aria-label="${escaparAtributo(rotulo)}" data-peca="${peca}">` +
+    `<g id="peca-${peca}" role="button" tabindex="0" aria-label="${escaparAtributo(rotulo)}" data-peca="${peca}"${filtroCss}>` +
     `<g data-mapa-visual="">${desenho}</g>` +
     `<g data-mapa-alvo="" opacity="0" aria-hidden="true">${semIds(desenho)}</g></g>`
   );
@@ -206,8 +272,8 @@ function grupoDaPeca(trecho: TrechoDaPeca, filhos: string, rotulo: string): stri
 
 /**
  * Valida o SVG do boi e devolve o markup pronto para a página: sem prólogo, sem width/height na raiz,
- * com `--mapa-escala` e com cada peça focável, nomeada e embrulhada (veja o topo do arquivo).
- * Lança `ErroContratoSvg` com todos os problemas encontrados.
+ * com `--mapa-escala`, com o filtro do destaque e com cada peça focável, nomeada e embrulhada (veja o topo
+ * do arquivo). Lança `ErroContratoSvg` com todos os problemas encontrados.
  */
 export function prepararSvgBoi(svg: string, rotulos: Record<Peca, string>): string {
   const limpo = limpar(svg);
@@ -223,5 +289,8 @@ export function prepararSvgBoi(svg: string, rotulos: Record<Peca, string>): stri
   }
   saida += limpo.slice(cursor);
 
-  return saida.replace(TAG_SVG_RAIZ, (_, atributos: string) => prepararRaiz(atributos, larguraDoViewBox(atributos)!));
+  return saida.replace(TAG_SVG_RAIZ, (_, atributos: string) => {
+    const viewBox = viewBoxDe(atributos)!;
+    return prepararRaiz(atributos, viewBox[2]) + filtroDoDestaque(viewBox);
+  });
 }

@@ -187,6 +187,54 @@ describe('prepararSvgBoi', () => {
     });
   });
 
+  describe('filtro do destaque (o Safari ignora as funções de filtro do CSS em elementos do SVG)', () => {
+    it('injeta um único <filter id="mapa-destaque"> logo depois da raiz, cobrindo o viewBox com margem', () => {
+      const out = prepararSvgBoi(valido, rotulos);
+      expect(out.match(/\sid="mapa-destaque"/g)).toHaveLength(1);
+      expect(out).toMatch(
+        /^<svg[^>]*><defs><filter id="mapa-destaque" filterUnits="userSpaceOnUse" x="-20" y="-20" width="360" height="240" color-interpolation-filters="sRGB">/,
+      );
+      // Brilho (brightness 1,12), brilho dourado e sombra marinho: os mesmos valores do destaque em CSS.
+      expect(out).toContain(
+        '<feComponentTransfer in="SourceGraphic" result="claro"><feFuncR type="linear" slope="1.12"/>' +
+          '<feFuncG type="linear" slope="1.12"/><feFuncB type="linear" slope="1.12"/></feComponentTransfer>',
+      );
+      expect(out).toContain(
+        '<feDropShadow in="claro" dx="0" dy="0" stdDeviation="2.5" flood-color="#C9A45C" flood-opacity="0.9" result="brilho"/>',
+      );
+      expect(out).toContain(
+        '<feDropShadow in="brilho" dx="0" dy="6" stdDeviation="3" flood-color="#0B1633" flood-opacity="0.35"/></filter></defs>',
+      );
+    });
+
+    it('a região, o brilho e a sombra acompanham a escala e a origem do viewBox', () => {
+      const out = prepararSvgBoi(montar(PECAS, '', '<svg viewBox="10 20 1600 1000">'), rotulos);
+      expect(out).toContain(
+        '<filter id="mapa-destaque" filterUnits="userSpaceOnUse" x="-90" y="-80" width="1800" height="1200"',
+      );
+      expect(out).toContain('dx="0" dy="0" stdDeviation="12.5"');
+      expect(out).toContain('dx="0" dy="30" stdDeviation="15"');
+    });
+
+    it('rejeita um id "mapa-destaque" no desenho (é do site)', () => {
+      expect(problemasDe(montar(PECAS, '<path id="mapa-destaque" d="M0 0z"/>'))).toEqual([
+        'O id "mapa-destaque" é reservado para o destaque do site: use outro id no SVG',
+      ]);
+    });
+
+    it('peça dentro de grupo com transform usa o destaque do CSS (a região do filtro pode não cobri-la)', () => {
+      const svg = valido
+        .replace('<g id="peca-pa">', `<g transform="scale(0.5)"><g id="peca-pa">`)
+        .replace('<g id="peca-traseiro">', `<g style="opacity:1; transform: translate(4px)"><g id="peca-traseiro">`)
+        .replace(/(<g id="peca-(?:pa|traseiro)"><path d="M0 0h1v1z"\/><\/g>)/g, '$1</g>');
+      const out = prepararSvgBoi(svg, rotulos);
+      expect(out).toContain('aria-label="Pá de Boi" data-peca="pa" data-mapa-filtro="css">');
+      expect(out).toContain('aria-label="Traseiro de Boi" data-peca="traseiro" data-mapa-filtro="css">');
+      expect(out).toContain('aria-label="Dianteiro de Boi" data-peca="dianteiro">');
+      expect(gruposEquilibrados(out)).toBe(true);
+    });
+  });
+
   it('escapa o rótulo no atributo', () => {
     const out = prepararSvgBoi(valido, { ...rotulos, pa: 'Pá "A" & <B>' });
     expect(out).toContain('aria-label="Pá &quot;A&quot; &amp; &lt;B&gt;"');

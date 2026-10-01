@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { PECAS } from '../src/data/mapa';
 
 /** Abre a página e espera o mapa ficar interativo (o efeito do cliente marca aria-pressed nas peças). */
 async function abrirMapa(page: Page) {
@@ -123,6 +124,16 @@ test('passar o mouse na pá destaca só a pá', async ({ page }) => {
   // Só a prévia: o botão da cotação aparece depois de escolher (clique).
   await expect(page.locator('#cortes').getByText('Clique para escolher')).toBeVisible();
   await expect(page.locator('#cortes').getByRole('button', { name: 'Adicionar à cotação' })).toHaveCount(0);
+  // Brilho e sombra por filtro SVG do próprio desenho: o Safari ignora as funções de filtro do CSS no SVG.
+  await expect(page.locator('#mapa-destaque')).toHaveCount(1);
+  await expect(page.locator('#peca-pa > [data-mapa-visual]')).toHaveCSS('filter', /url\(.*#mapa-destaque/);
+  await expect(page.locator('#peca-traseiro > [data-mapa-visual]')).toHaveCSS('filter', 'none');
+});
+
+test('cada uma das 6 peças tem um ponto visível que recebe o mouse', async ({ page }) => {
+  await abrirMapa(page);
+  // pontoDaPeca falha se a peça estiver toda coberta por outra (ex.: a pá antes do dianteiro no arquivo).
+  for (const peca of PECAS) await pontoDaPeca(page, peca);
 });
 
 test('mouse na língua fica estável', async ({ page }) => {

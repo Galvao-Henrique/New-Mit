@@ -27,11 +27,13 @@ Regras técnicas obrigatórias:
 1. Um único arquivo SVG com viewBox, sem width/height fixos.
 2. Cada grupo <g id="peca-..."> contém só as formas daquela peça (inclusive o sombreado dela).
    Os grupos de peça ficam lado a lado: nenhum fica dentro do outro (a pá não vai dentro do dianteiro).
-3. Cabeça, patas, rabo, contorno e sombra no chão ficam FORA dos grupos de peças.
-4. Nenhum texto dentro do SVG.
-5. Sem imagens embutidas (PNG/JPG), sem <script>, sem <style> (cores e estilos como atributos
-   de apresentação, ex.: fill="#1B3C91"), sem fontes externas.
-6. Tamanho máximo de 150 KB.
+3. Ordem no arquivo: peca-pa e os miúdos (peca-lingua, peca-figado, peca-rumen) vêm DEPOIS de
+   peca-dianteiro e peca-traseiro, para ficarem por cima dos quartos e poderem ser clicados.
+4. Cabeça, patas, rabo, contorno e sombra no chão ficam FORA dos grupos de peças.
+5. Nenhum texto dentro do SVG.
+6. Sem imagens embutidas (PNG/JPG), sem <script>, sem <style> (cores e estilos como atributos
+   de apresentação, ex.: fill="#1B3C91"), sem fontes externas. Não use o id "mapa-destaque" (é do site).
+7. Tamanho máximo de 150 KB.
 ```
 
 ---
