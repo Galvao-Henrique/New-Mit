@@ -17,7 +17,7 @@ Paleta:
 O corpo deve estar dividido nas peças de corte, cada uma como um grupo SVG separado,
 com exatamente estes ids:
 - peca-dianteiro: quarto dianteiro (pescoço, acém, peito), SEM a pá
-- peca-pa: a pá / paleta (ombro), dentro do dianteiro
+- peca-pa: a pá / paleta (ombro), na região do dianteiro
 - peca-traseiro: quarto traseiro (lombo, alcatra, coxão)
 - peca-lingua: a língua, visível na boca
 - peca-figado: o fígado, desenhado em transparência na posição anatômica
@@ -26,9 +26,11 @@ com exatamente estes ids:
 Regras técnicas obrigatórias:
 1. Um único arquivo SVG com viewBox, sem width/height fixos.
 2. Cada grupo <g id="peca-..."> contém só as formas daquela peça (inclusive o sombreado dela).
+   Os grupos de peça ficam lado a lado: nenhum fica dentro do outro (a pá não vai dentro do dianteiro).
 3. Cabeça, patas, rabo, contorno e sombra no chão ficam FORA dos grupos de peças.
 4. Nenhum texto dentro do SVG.
-5. Sem imagens embutidas (PNG/JPG), sem <script>, sem fontes externas.
+5. Sem imagens embutidas (PNG/JPG), sem <script>, sem <style> (cores e estilos como atributos
+   de apresentação, ex.: fill="#1B3C91"), sem fontes externas.
 6. Tamanho máximo de 150 KB.
 ```
 

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { PECAS, type Peca } from '@/data/mapa';
 import { ErroContratoSvg, prepararSvgBoi } from './mapa';
@@ -23,11 +24,23 @@ const valido = montar();
 const semRumen = montar(PECAS.filter((p) => p !== 'rumen'));
 const paDuplicada = montar([...PECAS, 'pa']);
 const comScript = montar(PECAS, '<script>alert(1)</script>');
+const comEstilo = montar(PECAS, '<style>path { fill: red }</style>');
 const comTexto = montar(PECAS, '<text x="0" y="10">Boi</text>');
 const comImagem = montar(PECAS, '<image href="boi.png" width="10" height="10"/>');
 const comEvento = valido.replace('<g id="peca-pa"', '<g id="peca-pa" onclick="alert(1)"');
 const semViewBox = montar(PECAS, '', '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">');
 const grande = montar(PECAS, `<path d="M0 0${' l1 1'.repeat(40_000)}"/>`);
+
+/** Cada `<g>` aberto (sem ser vazio `<g/>`) tem o seu `</g>`, e nenhum fecha antes de abrir. */
+function gruposEquilibrados(svg: string): boolean {
+  let abertos = 0;
+  for (const m of svg.matchAll(/<g\b(?:[^>"']|"[^"]*"|'[^']*')*>|<\/g>/g)) {
+    if (m[0] === '</g>') abertos--;
+    else if (!m[0].endsWith('/>')) abertos++;
+    if (abertos < 0) return false;
+  }
+  return abertos === 0;
+}
 
 function problemasDe(svg: string): string[] {
   try {
@@ -75,7 +88,7 @@ describe('prepararSvgBoi', () => {
       '<svg width="320" height="200" viewBox="0 0 320 200">',
     );
     const out = prepararSvgBoi(svg, rotulos);
-    expect(out.startsWith('<svg viewBox="0 0 320 200">')).toBe(true);
+    expect(out.startsWith('<svg viewBox="0 0 320 200" style="--mapa-escala:1">')).toBe(true);
     expect(out).toContain('<rect width="10" height="5" stroke-width="2"/>');
   });
 
@@ -86,8 +99,92 @@ describe('prepararSvgBoi', () => {
     const out = prepararSvgBoi(svg, rotulos);
     expect(out).toContain('<g id="peca-pa" role="button" tabindex="0" aria-label="Pá de Boi" data-peca="pa">');
     expect(out).toContain(
-      '<g id="peca-rumen" role="button" tabindex="0" aria-label="Rúmen de Bovino" data-peca="rumen"/>',
+      '<g id="peca-rumen" role="button" tabindex="0" aria-label="Rúmen de Bovino" data-peca="rumen">' +
+        '<g data-mapa-visual=""></g><g data-mapa-alvo="" opacity="0" aria-hidden="true"></g></g>',
     );
+    expect(gruposEquilibrados(out)).toBe(true);
+  });
+
+  describe('escala do desenho', () => {
+    it('põe --mapa-escala (largura do viewBox / 320) na raiz', () => {
+      const out = prepararSvgBoi(montar(PECAS, '', '<svg viewBox="0 0 1600 1000">'), rotulos);
+      expect(out.startsWith('<svg viewBox="0 0 1600 1000" style="--mapa-escala:5">')).toBe(true);
+    });
+
+    it('junta com o style que a raiz já tenha e aceita vírgulas no viewBox', () => {
+      const out = prepararSvgBoi(montar(PECAS, '', `<svg style='color: red;' viewBox='0,0,480,300'>`), rotulos);
+      expect(out.startsWith(`<svg style='color: red;--mapa-escala:1.5' viewBox='0,0,480,300'>`)).toBe(true);
+    });
+
+    it('rejeita viewBox que não tem quatro números com largura e altura positivas', () => {
+      for (const vb of ['0 0 320', '0 0 abc 200', '0 0 0 200', '']) {
+        expect(problemasDe(montar(PECAS, '', `<svg viewBox="${vb}">`))).toEqual([
+          'O viewBox precisa de quatro números (x, y, largura e altura positivas)',
+        ]);
+      }
+    });
+  });
+
+  describe('peças embrulhadas: o destaque não mexe no desenho nem na área de toque', () => {
+    it('move a apresentação da peça para um grupo interno e cria a cópia parada para o mouse', () => {
+      const svg = valido.replace(
+        '<g id="peca-pa">',
+        `<g class='x' transform="rotate(10 5 5)" id="peca-pa" filter="url(#f)" opacity=".8" style="mix-blend-mode:multiply">`,
+      );
+      const out = prepararSvgBoi(svg, rotulos);
+      const interno = `<g class='x' transform="rotate(10 5 5)" filter="url(#f)" opacity=".8" style="mix-blend-mode:multiply"><path d="M0 0h1v1z"/></g>`;
+      expect(out).toContain(
+        '<g id="peca-pa" role="button" tabindex="0" aria-label="Pá de Boi" data-peca="pa">' +
+          `<g data-mapa-visual="">${interno}</g>` +
+          `<g data-mapa-alvo="" opacity="0" aria-hidden="true">${interno}</g></g>`,
+      );
+    });
+
+    it('sem atributos de apresentação, os filhos vão direto para o visual e a cópia', () => {
+      const out = prepararSvgBoi(valido, rotulos);
+      expect(out).toContain(
+        '<g id="peca-figado" role="button" tabindex="0" aria-label="Fígado de Bovino" data-peca="figado">' +
+          '<g data-mapa-visual=""><path d="M0 0h1v1z"/></g>' +
+          '<g data-mapa-alvo="" opacity="0" aria-hidden="true"><path d="M0 0h1v1z"/></g></g>',
+      );
+    });
+
+    it('acha o </g> certo com grupos aninhados dentro da peça', () => {
+      const filhos = '<g><g transform="scale(2)"><path d="M1 1z"/></g><g/></g><path d="M2 2z"/>';
+      const svg = valido.replace('<g id="peca-lingua"><path d="M0 0h1v1z"/></g>', `<g id="peca-lingua">${filhos}</g>`);
+      const out = prepararSvgBoi(svg, rotulos);
+      expect(out).toContain(
+        `data-peca="lingua"><g data-mapa-visual="">${filhos}</g>` +
+          `<g data-mapa-alvo="" opacity="0" aria-hidden="true">${filhos}</g></g><g id="peca-figado"`,
+      );
+      expect(gruposEquilibrados(out)).toBe(true);
+    });
+
+    it('a cópia parada não repete ids', () => {
+      const svg = valido.replace(
+        '<g id="peca-traseiro"><path d="M0 0h1v1z"/></g>',
+        `<g id="peca-traseiro"><clipPath id="corte"><path d="M0 0z"/></clipPath><path id='sombra' clip-path="url(#corte)" d="M0 0h1v1z"/></g>`,
+      );
+      const out = prepararSvgBoi(svg, rotulos);
+      expect(out.match(/\sid="corte"/g)).toHaveLength(1);
+      expect(out.match(/\sid='sombra'/g)).toHaveLength(1);
+      expect(out.match(/clip-path="url\(#corte\)"/g)).toHaveLength(2);
+    });
+
+    it('o boi.svg do projeto sai bem formado', () => {
+      const out = prepararSvgBoi(readFileSync('src/assets/mapa/boi.svg', 'utf8'), rotulos);
+      expect(gruposEquilibrados(out)).toBe(true);
+      expect(out.match(/data-mapa-visual=/g)).toHaveLength(6);
+      expect(out.match(/data-mapa-alvo=/g)).toHaveLength(6);
+    });
+
+    it('rejeita peça sem </g>', () => {
+      const svg = valido.replace(
+        '<g id="peca-lingua"><path d="M0 0h1v1z"/></g>',
+        '<g id="peca-lingua"><path d="M0 0z"/>',
+      );
+      expect(problemasDe(svg)).toContain('A peça "peca-lingua" não tem </g> de fechamento');
+    });
   });
 
   it('escapa o rótulo no atributo', () => {
@@ -99,6 +196,7 @@ describe('prepararSvgBoi', () => {
     ['sem peca-rumen', semRumen, 'Falta a peça "peca-rumen"'],
     ['peca-pa duplicada', paDuplicada, 'A peça "peca-pa" aparece 2 vezes'],
     ['com <script>', comScript, 'O SVG não pode ter <script>'],
+    ['com <style>', comEstilo, 'O SVG não pode ter <style> (use atributos de apresentação)'],
     ['com <text>', comTexto, 'O SVG não pode ter <text>'],
     ['com <image>', comImagem, 'O SVG não pode ter <image>'],
     ['com onclick', comEvento, 'O SVG não pode ter atributos de evento (on...)'],
@@ -141,6 +239,27 @@ describe('prepararSvgBoi', () => {
       `<defs><clipPath id="c"><path d="M0 0z"/></clipPath></defs><use xlink:href="#c"/><path clip-path="url('#c')" fill="url(#c)" d="M0 0z"/>`,
     );
     expect(problemasDe(interno)).toEqual([]);
+  });
+
+  it.each([
+    ['href = "#a"', '<use href = "#a"/>'],
+    ['href= "#a"', '<use href= "#a"/>'],
+    ["xlink:href=' #a'", "<use xlink:href=' #a'/>"],
+    ['url( "#a")', '<path fill=\'url( "#a")\' d="M0 0z"/>'],
+    ['url com &quot;', '<path style="fill: url(&quot;#a&quot;)" d="M0 0z"/>'],
+    ['url com &#39;', '<path style="fill: url(&#39;#a&#39;)" d="M0 0z"/>'],
+  ])('aceita referência interna com %s', (_, trecho) => {
+    expect(problemasDe(montar(PECAS, trecho))).toEqual([]);
+  });
+
+  it.each([
+    ['src=', '<path src="boi.png" d="M0 0z"/>'],
+    ['url com &quot; externo', '<path style="fill: url(&quot;fonte.woff&quot;)" d="M0 0z"/>'],
+    ['href vazio', '<use href=""/>'],
+  ])('rejeita referência externa com %s', (_, trecho) => {
+    expect(problemasDe(montar(PECAS, trecho))).toEqual([
+      'O SVG não pode ter referências externas (links, imagens ou fontes)',
+    ]);
   });
 
   it('rejeita arquivo que não começa com <svg>', () => {

@@ -31,17 +31,21 @@ type MapaBoiInterativoProps = {
 
 const focoDouradoEscuro = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado-escuro';
 
+/** Prévia de um item: sob o mouse ou com o foco do teclado. */
+type Previa = { slug: string; origem: 'mouse' | 'foco' };
+
 export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
   const { mapa } = home;
-  /** Item sob o mouse ou o foco (prévia). */
-  const [sobre, setSobre] = useState<string | null>(null);
+  const [sobre, setSobre] = useState<Previa | null>(null);
   /** Item escolhido por clique, toque, Enter ou Espaço. */
   const [fixo, setFixo] = useState<string | null>(null);
   const raiz = useRef<HTMLDivElement>(null);
   const desenho = useRef<HTMLDivElement>(null);
 
-  const slugExibido = sobre ?? fixo;
+  const slugExibido = sobre?.slug ?? fixo;
   const exibido = itens.find((i) => i.corteSlug === slugExibido) ?? null;
+  // Prévia do mouse: o botão da cotação não aparece, porque o mouse sai da peça a caminho dele.
+  const soPreviaDoMouse = sobre?.origem === 'mouse' && sobre.slug !== fixo;
   const naCotacao = useCotacao((estado) => estado.itens.some((i) => i.corteSlug === slugExibido));
   const alternar = useCotacao((estado) => estado.alternar);
 
@@ -65,12 +69,15 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
     return alvo.closest('[data-item]')?.getAttribute('data-item') ?? null;
   }
 
+  // Fora das peças (cabeça, patas, fundo) a prévia continua: só sair do desenho a apaga.
   function aoPassarNoDesenho(e: PointerEvent) {
-    if (e.pointerType === 'mouse') setSobre(itemDoAlvo(e.target));
+    if (e.pointerType !== 'mouse') return;
+    const slug = itemDoAlvo(e.target);
+    if (slug) setSobre({ slug, origem: 'mouse' });
   }
 
   function aoSairComMouse(e: PointerEvent) {
-    if (e.pointerType === 'mouse') setSobre(null);
+    if (e.pointerType === 'mouse') setSobre((atual) => (atual?.origem === 'mouse' ? null : atual));
   }
 
   function aoClicarNoDesenho(e: MouseEvent) {
@@ -88,7 +95,7 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
 
   function aoFocar(e: FocusEvent) {
     const slug = itemDoAlvo(e.target);
-    if (slug) setSobre(slug);
+    if (slug) setSobre({ slug, origem: 'foco' });
     // No botão do painel, volta ao item escolhido; sem escolha, mantém a prévia (o botão continua na tela).
     else if (fixo) setSobre(null);
   }
@@ -111,8 +118,9 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
       className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:mt-16 lg:grid-cols-12 lg:items-center lg:gap-12"
     >
       {/*
-        O SVG vem do nosso próprio arquivo (src/assets/mapa/boi.svg), lido e validado no build por
-        prepararSvgBoi: sem <script>, sem atributos on..., sem referências externas. Por isso o innerHTML é seguro.
+        O SVG é o nosso arquivo versionado (src/assets/mapa/boi.svg), conferido no build por prepararSvgBoi
+        (contrato: sem <script>, <style>, atributos on... ou referências externas). É uma checagem de contrato
+        para esse arquivo, não um sanitizador genérico: não use este caminho para SVG de fora.
       */}
       <div
         ref={desenho}
@@ -159,14 +167,20 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
             {exibido && (
               <>
                 <p className="mt-1 font-texto text-base text-tinta/75">{exibido.corte.subcategoria}</p>
-                <Botao
-                  tom="claro"
-                  variante={naCotacao ? 'contorno' : 'primario'}
-                  onClick={aoAlternarCotacao}
-                  className="mt-5 w-full sm:w-auto"
-                >
-                  {naCotacao ? mapa.remover : mapa.adicionar}
-                </Botao>
+                {soPreviaDoMouse ? (
+                  <p className="mt-5 flex min-h-12 items-center font-texto text-base font-semibold text-dourado-escuro lg:min-h-14">
+                    {mapa.escolher}
+                  </p>
+                ) : (
+                  <Botao
+                    tom="claro"
+                    variante={naCotacao ? 'contorno' : 'primario'}
+                    onClick={aoAlternarCotacao}
+                    className="mt-5 w-full sm:w-auto"
+                  >
+                    {naCotacao ? mapa.remover : mapa.adicionar}
+                  </Botao>
+                )}
               </>
             )}
           </div>
@@ -193,7 +207,7 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
                   data-item={item.corteSlug}
                   aria-pressed={escolhido}
                   onPointerEnter={(e) => {
-                    if (e.pointerType === 'mouse') setSobre(item.corteSlug);
+                    if (e.pointerType === 'mouse') setSobre({ slug: item.corteSlug, origem: 'mouse' });
                   }}
                   onClick={() => setFixo(item.corteSlug)}
                   className={`inline-flex min-h-11 items-center rounded-full border px-4 font-texto text-base font-semibold transition-colors ${estado} ${focoDouradoEscuro}`}

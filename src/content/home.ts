@@ -19,6 +19,7 @@ export const home = {
     rotuloDesenho: 'Partes do boi',
     rotuloLista: 'Cortes bovinos',
     vazio: 'Passe o mouse ou toque numa parte do boi',
+    escolher: 'Clique para escolher',
     imagemIlustrativa: 'Imagem ilustrativa',
     adicionar: 'Adicionar à cotação',
     remover: 'Remover da cotação',
