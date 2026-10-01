@@ -41,7 +41,7 @@ export const home = {
     rotuloCategorias: 'Categorias',
     todos: 'Todos',
     buscaRotulo: 'Buscar corte',
-    buscaPlaceholder: 'Ex.: picanha, fígado…',
+    buscaPlaceholder: 'Ex.: costelinha, fígado…',
     vazio: 'Nenhum corte encontrado para',
     limparBusca: 'Limpar busca',
     adicionar: 'Adicionar à cotação',
@@ -113,6 +113,9 @@ export const home = {
     fechar: 'Fechar lista de cotação',
     verCotacao: 'Ver cotação',
     removerItem: 'Remover',
+    limparLista: 'Limpar lista',
+    confirmarLimpeza: 'Confirmar limpeza',
+    cancelarLimpeza: 'Cancelar',
   },
 } as const;
 

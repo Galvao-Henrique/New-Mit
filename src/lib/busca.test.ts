@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { home } from '@/content/home';
 import { cortes } from '@/data/cortes';
 import { filtrarCortes, normalizar, paginar, POR_PAGINA, totalDePaginas } from './busca';
 
@@ -35,6 +36,25 @@ describe('filtrarCortes', () => {
   it('combina categoria e busca', () => {
     expect(filtrarCortes(cortes, 'suinos', 'pernil')).toHaveLength(2);
     expect(filtrarCortes(cortes, 'aves', 'pernil')).toHaveLength(0);
+  });
+
+  it('busca também pelo nome da categoria, com ou sem acento', () => {
+    expect(filtrarCortes(cortes, 'todos', 'bovinos')).toHaveLength(7);
+    expect(filtrarCortes(cortes, 'todos', 'suinos')).toHaveLength(7);
+    expect(filtrarCortes(cortes, 'todos', 'Suínos')).toHaveLength(7);
+    expect(filtrarCortes(cortes, 'todos', 'aves')).toHaveLength(8);
+    expect(filtrarCortes(cortes, 'todos', 'linguiças')).toHaveLength(2);
+    expect(filtrarCortes(cortes, 'aves', 'suinos')).toHaveLength(0);
+  });
+
+  it('cada exemplo do campo de busca encontra um corte do catálogo', () => {
+    const exemplos = home.catalogo.buscaPlaceholder
+      .replace(/^Ex\.:/, '')
+      .replace(/…$/, '')
+      .split(',')
+      .map((t) => t.trim());
+    expect(exemplos.length).toBeGreaterThan(0);
+    for (const exemplo of exemplos) expect(filtrarCortes(cortes, 'todos', exemplo), exemplo).not.toHaveLength(0);
   });
 });
 

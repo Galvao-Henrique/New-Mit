@@ -40,6 +40,11 @@ html {
   scroll-padding-top: var(--altura-topo);
 }
 
+/* Com a barra de cotação (6rem, como o espaçador dela), o foco por teclado não fica escondido atrás dela. */
+html:has([data-barra-cotacao]) {
+  scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+
 body {
   @apply bg-marinho text-creme font-texto;
   font-size: 1rem;

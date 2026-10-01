@@ -4,7 +4,7 @@ export interface Corte {
   slug: string;
   nome: string;
   categoria: CategoriaSlug;
-  /** Rótulo exibido no card, ex.: "Bovino Com Osso". */
+  /** Rótulo exibido no card, ex.: "Bovino com Osso". */
   subcategoria: string;
   /** Id da foto em `fotos.json`. */
   foto?: string;

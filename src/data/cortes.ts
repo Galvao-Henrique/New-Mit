@@ -2,10 +2,10 @@ import type { Corte } from '@/types/catalogo';
 
 /** Os 24 cortes do site atual, na mesma ordem. */
 export const cortes: Corte[] = [
-  { slug: 'boi-casado', nome: 'Boi Casado', categoria: 'bovinos', subcategoria: 'Bovino Com Osso' },
-  { slug: 'dianteiro-de-boi', nome: 'Dianteiro de Boi', categoria: 'bovinos', subcategoria: 'Bovino Com Osso' },
-  { slug: 'pa-de-boi', nome: 'Pá de Boi', categoria: 'bovinos', subcategoria: 'Bovino Com Osso' },
-  { slug: 'traseiro-de-boi', nome: 'Traseiro de Boi', categoria: 'bovinos', subcategoria: 'Bovino Com Osso' },
+  { slug: 'boi-casado', nome: 'Boi Casado', categoria: 'bovinos', subcategoria: 'Bovino com Osso' },
+  { slug: 'dianteiro-de-boi', nome: 'Dianteiro de Boi', categoria: 'bovinos', subcategoria: 'Bovino com Osso' },
+  { slug: 'pa-de-boi', nome: 'Pá de Boi', categoria: 'bovinos', subcategoria: 'Bovino com Osso' },
+  { slug: 'traseiro-de-boi', nome: 'Traseiro de Boi', categoria: 'bovinos', subcategoria: 'Bovino com Osso' },
   { slug: 'figado-de-bovino', nome: 'Fígado de Bovino', categoria: 'bovinos', subcategoria: 'Miúdo Bovino' },
   { slug: 'lingua-bovina', nome: 'Língua Bovina', categoria: 'bovinos', subcategoria: 'Miúdo Bovino' },
   { slug: 'rumen-de-bovino', nome: 'Rúmen de Bovino', categoria: 'bovinos', subcategoria: 'Miúdo Bovino' },
@@ -14,33 +14,33 @@ export const cortes: Corte[] = [
     slug: 'costelinha-suina',
     nome: 'Costelinha Suína',
     categoria: 'suinos',
-    subcategoria: 'Suíno Com Osso',
+    subcategoria: 'Suíno com Osso',
     foto: 'costelinha-suina',
   },
-  { slug: 'metade-suina', nome: 'Metade Suína', categoria: 'suinos', subcategoria: 'Suíno Com Osso' },
+  { slug: 'metade-suina', nome: 'Metade Suína', categoria: 'suinos', subcategoria: 'Suíno com Osso' },
   {
     slug: 'pernil-suino-com-pele-e-com-osso',
-    nome: 'Pernil Suíno Com Pele e Com Osso',
+    nome: 'Pernil Suíno com Pele e com Osso',
     categoria: 'suinos',
-    subcategoria: 'Suíno Com Osso',
+    subcategoria: 'Suíno com Osso',
   },
-  { slug: 'pe-suino', nome: 'Pé Suíno', categoria: 'suinos', subcategoria: 'Suíno Com Osso' },
-  { slug: 'barriga-suina', nome: 'Barriga Suína', categoria: 'suinos', subcategoria: 'Suíno Sem Osso' },
+  { slug: 'pe-suino', nome: 'Pé Suíno', categoria: 'suinos', subcategoria: 'Suíno com Osso' },
+  { slug: 'barriga-suina', nome: 'Barriga Suína', categoria: 'suinos', subcategoria: 'Suíno sem Osso' },
   {
     slug: 'pernil-suino-sem-pele-e-sem-osso',
-    nome: 'Pernil Suíno Sem Pele e Sem Osso',
+    nome: 'Pernil Suíno sem Pele e sem Osso',
     categoria: 'suinos',
-    subcategoria: 'Suíno Sem Osso',
+    subcategoria: 'Suíno sem Osso',
   },
   {
     slug: 'toucinho-lombar-com-pele',
-    nome: 'Toucinho Lombar Com Pele',
+    nome: 'Toucinho Lombar com Pele',
     categoria: 'suinos',
-    subcategoria: 'Suíno Sem Osso',
+    subcategoria: 'Suíno sem Osso',
   },
 
   { slug: 'asa-de-frango', nome: 'Asa de Frango', categoria: 'aves', subcategoria: 'Aves' },
-  { slug: 'coxa-com-sobrecoxa', nome: 'Coxa Com Sobrecoxa', categoria: 'aves', subcategoria: 'Aves' },
+  { slug: 'coxa-com-sobrecoxa', nome: 'Coxa com Sobrecoxa', categoria: 'aves', subcategoria: 'Aves' },
   { slug: 'coxinha-da-asa', nome: 'Coxinha da Asa', categoria: 'aves', subcategoria: 'Aves' },
   {
     slug: 'file-de-peito-de-frango',
@@ -63,7 +63,7 @@ export const cortes: Corte[] = [
     subcategoria: 'Aves',
     foto: 'nuggets-de-frango',
   },
-  { slug: 'peito-de-frango-com-osso', nome: 'Peito de Frango Com Osso', categoria: 'aves', subcategoria: 'Aves' },
+  { slug: 'peito-de-frango-com-osso', nome: 'Peito de Frango com Osso', categoria: 'aves', subcategoria: 'Aves' },
 
   {
     slug: 'linguica-toscana-aurora',

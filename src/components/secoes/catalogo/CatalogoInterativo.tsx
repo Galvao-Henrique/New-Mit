@@ -101,7 +101,8 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
               <Foto
                 foto={foto}
                 decorativa
-                sizes="(min-width: 1280px) 220px, (min-width: 640px) 18vw, 50vw"
+                // 2 colunas (metade da tela) até o lg; 5 colunas a partir dele.
+                sizes="(min-width: 1280px) 220px, (min-width: 1024px) 18vw, 50vw"
                 className="-z-20 transition-transform duration-500 motion-reduce:transition-none group-hover:scale-105"
               />
               <span

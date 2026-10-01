@@ -5,7 +5,7 @@ type Modulo = typeof import('./cotacao');
 let useCotacao: Modulo['useCotacao'];
 let descartarDesconhecidos: Modulo['descartarDesconhecidos'];
 
-const boi: Corte = { slug: 'boi-casado', nome: 'Boi Casado', categoria: 'bovinos', subcategoria: 'Bovino Com Osso' };
+const boi: Corte = { slug: 'boi-casado', nome: 'Boi Casado', categoria: 'bovinos', subcategoria: 'Bovino com Osso' };
 
 beforeAll(async () => {
   // O persist do zustand avisa quando não há localStorage (ambiente node).
@@ -28,7 +28,7 @@ describe('useCotacao', () => {
     useCotacao.getState().adicionar(boi);
     useCotacao.getState().adicionar(boi);
     expect(useCotacao.getState().itens).toEqual([
-      { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino Com Osso' },
+      { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino com Osso' },
     ]);
     useCotacao.getState().alternar(boi);
     expect(useCotacao.getState().itens).toHaveLength(0);
@@ -67,14 +67,14 @@ describe('descartarDesconhecidos', () => {
     expect(
       descartarDesconhecidos(
         [
-          { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino Com Osso' },
+          { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino com Osso' },
           { corteSlug: 'saiu', nome: 'X', subcategoria: 'Y' },
           null,
           'lixo',
         ],
         slugs,
       ),
-    ).toEqual([{ corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino Com Osso' }]);
+    ).toEqual([{ corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino com Osso' }]);
     expect(descartarDesconhecidos('não é lista', slugs)).toEqual([]);
   });
 });

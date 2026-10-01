@@ -23,7 +23,7 @@ describe('mensagemCotacao', () => {
       mensagemCotacao({
         observacao: 'Entrega às terças.',
         itens: [
-          { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino Com Osso' },
+          { corteSlug: 'boi-casado', nome: 'Boi Casado', subcategoria: 'Bovino com Osso' },
           { corteSlug: 'moela', nome: 'Moela', subcategoria: 'Aves' },
         ],
       }),
@@ -32,7 +32,7 @@ describe('mensagemCotacao', () => {
         'Olá! Vim pelo site e gostaria de uma cotação para a minha empresa.',
         '',
         '*Cortes:*',
-        '• Boi Casado (Bovino Com Osso)',
+        '• Boi Casado (Bovino com Osso)',
         '• Moela (Aves)',
         '',
         '*Observação:* Entrega às terças.',

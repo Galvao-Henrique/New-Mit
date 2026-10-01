@@ -9,6 +9,12 @@ describe('catálogo', () => {
     expect(new Set(cortes.map((c) => c.slug)).size).toBe(24);
   });
 
+  it('"com" e "sem" ficam em minúsculas no meio dos nomes e das subcategorias', () => {
+    for (const corte of cortes) {
+      expect(`${corte.nome} | ${corte.subcategoria}`).not.toMatch(/\b(?:Com|Sem)\b/);
+    }
+  });
+
   it('toda categoria tem corte e foto', () => {
     for (const cat of categorias) {
       expect(cortes.some((c) => c.categoria === cat.slug)).toBe(true);

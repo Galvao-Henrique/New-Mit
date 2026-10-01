@@ -79,6 +79,69 @@ test('adicionar e remover', async ({ page }) => {
   await expect(botaoTopo(page)).toContainText('Cotação (1)');
 });
 
+test('o botão do card não usa aria-pressed: o texto diz o estado', async ({ page }) => {
+  await abrir(page);
+  const adicionarBoi = catalogo(page).getByRole('button', { name: 'Adicionar à cotação: Boi Casado' });
+  await expect(adicionarBoi).not.toHaveAttribute('aria-pressed');
+  await adicionarBoi.click();
+  const removerBoi = catalogo(page).getByRole('button', { name: 'Remover da cotação: Boi Casado' });
+  await expect(removerBoi).toBeVisible();
+  await expect(removerBoi).not.toHaveAttribute('aria-pressed');
+});
+
+test('com a barra de cotação, o foco do teclado não fica escondido atrás dela', async ({ page }) => {
+  await abrir(page);
+  await adicionar(page, 'Boi Casado');
+  const barra = page.locator('[data-barra-cotacao]');
+  await expect(barra).toBeVisible();
+  const anterior = catalogo(page).getByRole('button', { name: 'Adicionar à cotação: Pá de Boi' });
+  const alvo = catalogo(page).getByRole('button', { name: 'Adicionar à cotação: Traseiro de Boi' });
+  // O alvo fica dentro da janela, mas sob a barra; o foco vai para o botão anterior sem rolar.
+  await alvo.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    window.scrollBy({ top: r.bottom - (window.innerHeight - 16), behavior: 'instant' });
+  });
+  await anterior.evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+  await page.keyboard.press('Tab');
+  await expect(alvo).toBeFocused();
+  await expect
+    .poll(async () => {
+      const botao = (await alvo.boundingBox())!;
+      const topoDaBarra = (await barra.boundingBox())!.y;
+      return botao.y + botao.height <= topoDaBarra;
+    })
+    .toBe(true);
+});
+
+test('limpar lista pede confirmação, esvazia a lista e leva o foco ao aviso', async ({ page }) => {
+  await abrir(page);
+  await adicionar(page, 'Boi Casado');
+  await adicionar(page, 'Pá de Boi');
+  await botaoTopo(page).click();
+  const painel = page.getByRole('dialog', { name: 'Sua lista de cotação' });
+  await painel.getByLabel('Observação (opcional)').fill('teste');
+
+  // O primeiro clique só pede confirmação; Cancelar desiste.
+  await painel.getByRole('button', { name: 'Limpar lista' }).click();
+  await expect(painel.getByRole('button', { name: 'Confirmar limpeza' })).toBeFocused();
+  await expect(painel.getByText('Boi Casado')).toBeVisible();
+  await painel.getByRole('button', { name: 'Cancelar' }).click();
+  await expect(painel.getByRole('button', { name: 'Limpar lista' })).toBeFocused();
+  await expect(botaoTopo(page)).toContainText('Cotação (2)');
+
+  await painel.getByRole('button', { name: 'Limpar lista' }).click();
+  await painel.getByRole('button', { name: 'Confirmar limpeza' }).click();
+  await expect(painel.getByText('Sua lista está vazia.')).toBeFocused();
+  await expect(botaoTopo(page)).toContainText('Cotação (0)');
+  await expect(page.locator('[data-barra-cotacao]')).toHaveCount(0);
+
+  // A observação também foi limpa.
+  await page.keyboard.press('Escape');
+  await adicionar(page, 'Boi Casado');
+  await botaoTopo(page).click();
+  await expect(painel.getByLabel('Observação (opcional)')).toHaveValue('');
+});
+
 test('lista persiste ao recarregar', async ({ page }) => {
   await abrir(page);
   await adicionar(page, 'Boi Casado');
@@ -99,7 +162,7 @@ test('link do WhatsApp', async ({ page }) => {
   const href = await page.getByRole('link', { name: 'Enviar pelo WhatsApp' }).getAttribute('href');
   expect(href).toMatch(/^https:\/\/wa\.me\/5512997052003\?text=/);
   const texto = decodeURIComponent(href!.split('?text=')[1]);
-  expect(texto).toContain('• Boi Casado (Bovino Com Osso)');
+  expect(texto).toContain('• Boi Casado (Bovino com Osso)');
   expect(texto).toContain('*Observação:* teste');
 });
 

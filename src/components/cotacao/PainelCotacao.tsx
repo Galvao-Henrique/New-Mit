@@ -2,6 +2,8 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import { WhatsappLogo, X } from '@phosphor-icons/react/dist/ssr';
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Botao } from '@/components/ui/Botao';
 import { site } from '@/config/site';
 import { home } from '@/content/home';
@@ -9,6 +11,47 @@ import { mensagemCotacao, whatsappUrl } from '@/lib/whatsapp';
 import { devolverFoco, useCotacao } from '@/store/cotacao';
 
 const focoDourado = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado';
+const botaoTexto = `inline-flex min-h-11 shrink-0 items-center rounded-sm px-3 font-texto text-base font-semibold ${focoDourado}`;
+const sublinhado = 'underline underline-offset-4';
+
+/**
+ * Limpar a lista em dois passos, sem window.confirm: o primeiro clique troca o botão por "Confirmar limpeza"
+ * (o mesmo elemento, então o foco fica nele) e mostra "Cancelar". Fica dentro do painel: fechar desfaz o pedido.
+ */
+function LimparLista({ aoConfirmar }: { aoConfirmar: () => void }) {
+  const { cotacao } = home;
+  const [confirmando, setConfirmando] = useState(false);
+  const botao = useRef<HTMLButtonElement>(null);
+
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-2 py-3">
+      <button
+        ref={botao}
+        type="button"
+        onClick={() => (confirmando ? aoConfirmar() : setConfirmando(true))}
+        className={
+          confirmando
+            ? `${botaoTexto} border-2 border-dourado text-creme hover:bg-dourado hover:text-marinho`
+            : `${botaoTexto} ${sublinhado} text-dourado hover:text-creme`
+        }
+      >
+        {confirmando ? cotacao.confirmarLimpeza : cotacao.limparLista}
+      </button>
+      {confirmando && (
+        <button
+          type="button"
+          onClick={() => {
+            setConfirmando(false);
+            botao.current?.focus();
+          }}
+          className={`${botaoTexto} ${sublinhado} text-creme/85 hover:text-dourado`}
+        >
+          {cotacao.cancelarLimpeza}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export function PainelCotacao() {
   const { cotacao } = home;
@@ -17,7 +60,15 @@ export function PainelCotacao() {
   const observacao = useCotacao((estado) => estado.observacao);
   const fecharPainel = useCotacao((estado) => estado.fecharPainel);
   const remover = useCotacao((estado) => estado.remover);
+  const limpar = useCotacao((estado) => estado.limpar);
   const definirObservacao = useCotacao((estado) => estado.definirObservacao);
+  const avisoVazia = useRef<HTMLParagraphElement>(null);
+
+  // O botão some com a lista: o foco vai para o aviso "Sua lista está vazia", que o leitor de tela lê.
+  function limparLista() {
+    flushSync(() => limpar());
+    avisoVazia.current?.focus();
+  }
 
   return (
     <Dialog.Root open={aberto} onOpenChange={(abrir) => !abrir && fecharPainel()}>
@@ -49,34 +100,39 @@ export function PainelCotacao() {
 
           {itens.length === 0 ? (
             <div className="flex flex-col items-start gap-5 px-5 py-8 sm:px-6">
-              <p className="font-texto text-lg text-creme">{cotacao.vazia}</p>
+              <p ref={avisoVazia} tabIndex={-1} className="font-texto text-lg text-creme focus:outline-none">
+                {cotacao.vazia}
+              </p>
               <Botao variante="contorno" href={`#${site.ancoras.catalogo}`} onClick={fecharPainel}>
                 {cotacao.verCatalogo}
               </Botao>
             </div>
           ) : (
             <>
-              <ul className="min-h-0 flex-1 overflow-y-auto px-5 sm:px-6">
-                {itens.map((item) => (
-                  <li
-                    key={item.corteSlug}
-                    className="flex items-center justify-between gap-4 border-b border-creme/10 py-3"
-                  >
-                    <div>
-                      <p className="font-texto text-base font-semibold text-creme">{item.nome}</p>
-                      <p className="font-texto text-base text-creme/70">{item.subcategoria}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => remover(item.corteSlug)}
-                      aria-label={`Remover ${item.nome} da lista`}
-                      className={`inline-flex min-h-11 shrink-0 items-center rounded-sm px-3 font-texto text-base font-semibold text-dourado underline underline-offset-4 hover:text-creme ${focoDourado}`}
+              <div className="min-h-0 flex-1 overflow-y-auto px-5 sm:px-6">
+                <ul>
+                  {itens.map((item) => (
+                    <li
+                      key={item.corteSlug}
+                      className="flex items-center justify-between gap-4 border-b border-creme/10 py-3"
                     >
-                      {cotacao.removerItem}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      <div>
+                        <p className="font-texto text-base font-semibold text-creme">{item.nome}</p>
+                        <p className="font-texto text-base text-creme/70">{item.subcategoria}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => remover(item.corteSlug)}
+                        aria-label={`Remover ${item.nome} da lista`}
+                        className={`${botaoTexto} ${sublinhado} text-dourado hover:text-creme`}
+                      >
+                        {cotacao.removerItem}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <LimparLista aoConfirmar={limparLista} />
+              </div>
               <div className="border-t border-creme/15 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
                 <label htmlFor="observacao-cotacao" className="font-texto text-base font-semibold text-creme">
                   {cotacao.observacaoRotulo}

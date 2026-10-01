@@ -37,10 +37,10 @@ export function CardCorte({ corte, foto }: CardCorteProps) {
           variante={naCotacao ? 'contorno' : 'primario'}
           onClick={() => alternar(corte)}
           rotuloAcessivel={`${texto}: ${corte.nome}`}
-          pressionado={naCotacao}
           className="mt-auto w-full px-2! md:px-6!"
         >
-          {/* O nome acessível (aria-label) é sempre o completo e contém a palavra visível. */}
+          {/* O texto diz o estado (Adicionar/Remover), como no mapa: sem aria-pressed. O nome acessível
+              (aria-label) é sempre o completo e começa pela palavra visível. */}
           <span className="md:hidden">{naCotacao ? catalogo.removerCurto : catalogo.adicionarCurto}</span>
           <span className="hidden md:inline">{texto}</span>
         </Botao>
