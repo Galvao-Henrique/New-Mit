@@ -47,6 +47,55 @@ export const home = {
     adicionar: 'Adicionar à cotação',
     remover: 'Remover da cotação',
   },
+  compromisso: {
+    rotulo: 'Sobre a Mitata',
+    titulo: 'Nosso compromisso',
+    pilares: [
+      { titulo: 'Entrega diária', texto: 'Seu pedido chega todos os dias, em todo o Vale do Paraíba.' },
+      { titulo: 'Qualidade', texto: 'Padrão constante em cada entrega, do primeiro ao último pedido.' },
+      {
+        titulo: 'Seleção criteriosa',
+        texto: 'Cada peça é escolhida com o cuidado de quem está no ramo há 50 anos.',
+      },
+      {
+        titulo: 'Atendimento especializado',
+        texto: 'Atendimento direto, de quem entende de carne, pelo WhatsApp.',
+      },
+    ],
+  },
+  empresas: {
+    rotulo: 'Para empresas',
+    titulo: 'Atendimento exclusivo para atacado',
+    texto: 'Fornecemos para restaurantes, açougues e mercados de todo o Vale do Paraíba, com entrega diária.',
+    rotuloLista: 'Quem atendemos',
+    segmentos: [
+      { icone: 'ForkKnife', texto: 'Restaurantes' },
+      { icone: 'Knife', texto: 'Açougues' },
+      { icone: 'Storefront', texto: 'Mercados' },
+    ],
+  },
+  essencia: {
+    rotuloLista: 'A Mitata em números',
+    numeros: [
+      { valor: 50, prefixo: '', sufixo: ' anos', legenda: 'de experiência' },
+      { valor: 20, prefixo: '+', sufixo: '', legenda: 'cortes disponíveis' },
+      { valor: 100, prefixo: '+', sufixo: '', legenda: 'clientes atendidos' },
+    ],
+  },
+  comoComprar: {
+    rotulo: 'Contato',
+    titulo: 'Como comprar',
+    texto: 'Fale com a gente no WhatsApp: diga os cortes que precisa e receba a sua cotação.',
+    botao: 'Chamar no WhatsApp',
+    montarLista: 'ou monte sua lista de cotação',
+  },
+  rodape: {
+    rotuloMenu: 'Rodapé',
+    abreNovaAba: '(abre em nova aba)',
+    resumo: 'Atacado · Entrega diária no Vale do Paraíba',
+    creditos: 'Créditos das fotos',
+    privacidade: 'Privacidade',
+  },
   cotacao: {
     painelTitulo: 'Sua lista de cotação',
     observacaoRotulo: 'Observação (opcional)',
