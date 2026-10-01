@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     'site-atual/**',
     'test-results/**',
     'playwright-report/**',
+    // Rascunhos locais (fora do git, como no .gitignore):
+    '.superpowers/**',
   ]),
 ]);
 

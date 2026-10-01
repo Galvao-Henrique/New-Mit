@@ -248,6 +248,8 @@ describe('prepararSvgBoi', () => {
     ['url( "#a")', '<path fill=\'url( "#a")\' d="M0 0z"/>'],
     ['url com &quot;', '<path style="fill: url(&quot;#a&quot;)" d="M0 0z"/>'],
     ['url com &#39;', '<path style="fill: url(&#39;#a&#39;)" d="M0 0z"/>'],
+    ['url com &#34;', '<path style="fill: url(&#34;#a&#34;)" d="M0 0z"/>'],
+    ['url com &apos;', '<path style="fill: url(&apos;#a&apos;)" d="M0 0z"/>'],
   ])('aceita referência interna com %s', (_, trecho) => {
     expect(problemasDe(montar(PECAS, trecho))).toEqual([]);
   });
@@ -255,6 +257,8 @@ describe('prepararSvgBoi', () => {
   it.each([
     ['src=', '<path src="boi.png" d="M0 0z"/>'],
     ['url com &quot; externo', '<path style="fill: url(&quot;fonte.woff&quot;)" d="M0 0z"/>'],
+    ['url com &#34; externo', '<path style="fill: url(&#34;fonte.woff&#34;)" d="M0 0z"/>'],
+    ['url com &apos; externo', '<path style="fill: url(&apos;fonte.woff&apos;)" d="M0 0z"/>'],
     ['href vazio', '<use href=""/>'],
   ])('rejeita referência externa com %s', (_, trecho) => {
     expect(problemasDe(montar(PECAS, trecho))).toEqual([

@@ -82,7 +82,9 @@ html.js [data-reveal][data-revelado] {
 */
 [data-peca] {
   cursor: pointer;
-  transition: filter 200ms ease;
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease;
 }
 
 [data-mapa-visual] {
@@ -106,8 +108,10 @@ html.js [data-reveal][data-revelado] {
     brightness(1.12);
 }
 
+/* Opacidade + brilho: o Safari pode ignorar filter em elementos do SVG, e a opacidade sozinha já escurece sobre o fundo. */
 [data-peca][data-estado='inativo'] {
-  filter: brightness(0.55);
+  opacity: 0.7;
+  filter: brightness(0.75);
 }
 
 /* Seção creme: o dourado não tem contraste, o contorno do foco é dourado-escuro. */

@@ -165,6 +165,36 @@ test('teclado', async ({ page }) => {
   await expect(traseiro).toHaveAttribute('data-estado', 'ativo');
 });
 
+test('teclado: Enter escolhe e o Tab chega ao botão da peça escolhida', async ({ page }) => {
+  await abrirMapa(page);
+  const mapa = page.locator('#cortes');
+  const pa = page.locator('#peca-pa');
+  for (let i = 0; i < 40; i++) {
+    if (await pa.evaluate((el) => el === document.activeElement)) break;
+    await page.keyboard.press('Tab');
+  }
+  await expect(pa).toBeFocused();
+  await expect(painel(page)).toHaveText('Pá de Boi');
+  await expect(mapa.getByText('Enter para escolher')).toBeVisible();
+  await expect(mapa.getByRole('button', { name: /^Adicionar à cotação/ })).toHaveCount(0);
+
+  await page.keyboard.press('Enter');
+  const adicionar = mapa.getByRole('button', { name: 'Adicionar à cotação: Pá de Boi', exact: true });
+  await expect(adicionar).toBeVisible();
+
+  // Passa pelas peças seguintes (prévias) até o botão; ao chegar nele, o cartão é o da pá.
+  const focoNoBotao = () =>
+    page.evaluate(() => document.activeElement?.textContent?.startsWith('Adicionar à cotação') ?? false);
+  for (let i = 0; i < 20 && !(await focoNoBotao()); i++) await page.keyboard.press('Tab');
+  await expect(adicionar).toBeFocused();
+  await expect(painel(page)).toHaveText('Pá de Boi');
+  await expect(pa).toHaveAttribute('data-estado', 'ativo');
+
+  await page.keyboard.press('Enter');
+  await expect(page.locator('header')).toContainText('Cotação (1)');
+  await expect(mapa.getByRole('button', { name: 'Remover da cotação: Pá de Boi', exact: true })).toBeFocused();
+});
+
 test.describe('celular', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 

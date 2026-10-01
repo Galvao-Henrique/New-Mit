@@ -8,6 +8,8 @@ type BotaoProps = {
   href?: string;
   onClick?: () => void;
   externo?: boolean;
+  /** Nome acessível completo; deve começar pelo texto visível (ex.: "Adicionar à cotação: Pá de Boi"). */
+  rotuloAcessivel?: string;
   className?: string;
 };
 
@@ -35,6 +37,7 @@ export function Botao({
   href,
   onClick,
   externo = false,
+  rotuloAcessivel,
   className = '',
 }: BotaoProps) {
   const classes = `${base} ${estilos[tom].foco} ${estilos[tom][variante]} ${className}`;
@@ -45,6 +48,7 @@ export function Botao({
         href={href}
         className={classes}
         onClick={onClick}
+        aria-label={rotuloAcessivel}
         {...(externo ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         {children}
@@ -53,7 +57,7 @@ export function Botao({
   }
 
   return (
-    <button type="button" className={classes} onClick={onClick}>
+    <button type="button" className={classes} onClick={onClick} aria-label={rotuloAcessivel}>
       {children}
     </button>
   );

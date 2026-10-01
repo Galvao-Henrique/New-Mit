@@ -3,6 +3,7 @@
 import { HandTap } from '@phosphor-icons/react/dist/ssr';
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
   type FocusEvent,
@@ -10,6 +11,7 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { Botao } from '@/components/ui/Botao';
 import { Foto } from '@/components/ui/Foto';
 import { home } from '@/content/home';
@@ -44,10 +46,13 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
 
   const slugExibido = sobre?.slug ?? fixo;
   const exibido = itens.find((i) => i.corteSlug === slugExibido) ?? null;
-  // Prévia do mouse: o botão da cotação não aparece, porque o mouse sai da peça a caminho dele.
-  const soPreviaDoMouse = sobre?.origem === 'mouse' && sobre.slug !== fixo;
+  // Prévia de uma peça que não é a escolhida: mostra o corte e a dica, sem o botão da cotação,
+  // que é só da peça escolhida (o mouse sai da peça a caminho dele, e o Tab passa por outras peças antes).
+  const previa = sobre && sobre.slug !== fixo ? sobre : null;
   const naCotacao = useCotacao((estado) => estado.itens.some((i) => i.corteSlug === slugExibido));
   const alternar = useCotacao((estado) => estado.alternar);
+  // Mesmo objeto entre renderizações: o SVG injetado nunca é recolocado (e o estado no DOM não se perde).
+  const svgInjetado = useMemo(() => ({ __html: svgHtml }), [svgHtml]);
 
   // Destaque das peças: ativo/inativo enquanto algo é exibido; sem atributo quando nada é.
   useEffect(() => {
@@ -95,19 +100,22 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
 
   function aoFocar(e: FocusEvent) {
     const slug = itemDoAlvo(e.target);
-    if (slug) setSobre({ slug, origem: 'foco' });
-    // No botão do painel, volta ao item escolhido; sem escolha, mantém a prévia (o botão continua na tela).
-    else if (fixo) setSobre(null);
+    // No botão do painel (que só existe para a peça escolhida), o cartão fica na peça escolhida.
+    setSobre(slug ? { slug, origem: 'foco' } : null);
   }
 
   function aoDesfocar(e: FocusEvent) {
     if (!raiz.current?.contains(e.relatedTarget as Node | null)) setSobre(null);
   }
 
+  // Tab saindo de uma peça ou da lista: antes de o navegador escolher o próximo foco, o cartão volta
+  // à peça escolhida, para o botão dela estar na sequência. O próximo foco refaz a prévia.
+  function aoTeclar(e: KeyboardEvent) {
+    if (e.key === 'Tab' && itemDoAlvo(e.target)) flushSync(() => setSobre(null));
+  }
+
   function aoAlternarCotacao() {
-    if (!exibido) return;
-    alternar(exibido.corte);
-    setFixo(exibido.corteSlug);
+    if (exibido) alternar(exibido.corte);
   }
 
   return (
@@ -115,6 +123,7 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
       ref={raiz}
       onFocus={aoFocar}
       onBlur={aoDesfocar}
+      onKeyDown={aoTeclar}
       className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:mt-16 lg:grid-cols-12 lg:items-center lg:gap-12"
     >
       {/*
@@ -131,7 +140,7 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
         onPointerLeave={aoSairComMouse}
         onClick={aoClicarNoDesenho}
         onKeyDown={aoTeclarNoDesenho}
-        dangerouslySetInnerHTML={{ __html: svgHtml }}
+        dangerouslySetInnerHTML={svgInjetado}
       />
 
       <div className="lg:col-span-5">
@@ -167,15 +176,17 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
             {exibido && (
               <>
                 <p className="mt-1 font-texto text-base text-tinta/75">{exibido.corte.subcategoria}</p>
-                {soPreviaDoMouse ? (
+                {previa ? (
                   <p className="mt-5 flex min-h-12 items-center font-texto text-base font-semibold text-dourado-escuro lg:min-h-14">
-                    {mapa.escolher}
+                    {previa.origem === 'mouse' ? mapa.escolherComMouse : mapa.escolherComTeclado}
                   </p>
                 ) : (
                   <Botao
                     tom="claro"
                     variante={naCotacao ? 'contorno' : 'primario'}
                     onClick={aoAlternarCotacao}
+                    // Nome acessível começa pelo texto visível: "Adicionar à cotação: Pá de Boi".
+                    rotuloAcessivel={`${naCotacao ? mapa.remover : mapa.adicionar}: ${exibido.corte.nome}`}
                     className="mt-5 w-full sm:w-auto"
                   >
                     {naCotacao ? mapa.remover : mapa.adicionar}
