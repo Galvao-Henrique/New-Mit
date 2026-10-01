@@ -1,7 +1,7 @@
 'use client';
 
 import { MagnifyingGlass, SquaresFour } from '@phosphor-icons/react/dist/ssr';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Foto } from '@/components/ui/Foto';
 import { contagemCortes, home } from '@/content/home';
 import type { Foto as FotoRegistrada } from '@/data/fotos';
@@ -25,6 +25,7 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
   const { catalogo } = home;
   const [categoria, setCategoria] = useState<FiltroCategoria>('todos');
   const [termo, setTermo] = useState('');
+  const campoBusca = useRef<HTMLInputElement>(null);
 
   const visiveis = useMemo(() => {
     const slugs = new Set(
@@ -41,12 +42,12 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
 
   return (
     <div className="mt-12 lg:mt-14">
-      <div role="group" aria-label={catalogo.rotuloCategorias} className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div role="group" aria-label={catalogo.rotuloCategorias} className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <button
           type="button"
           aria-pressed={categoria === 'todos'}
           onClick={() => setCategoria('todos')}
-          className={`col-span-2 flex min-h-20 items-center justify-center gap-3 rounded-sm border-2 px-4 font-titulo text-lg font-bold uppercase tracking-[0.1em] transition-colors sm:col-span-1 sm:min-h-28 sm:flex-col sm:gap-2 ${focoDourado} ${
+          className={`col-span-2 flex min-h-20 items-center justify-center gap-3 rounded-sm border-2 px-4 font-titulo text-lg font-bold uppercase tracking-[0.1em] transition-colors lg:col-span-1 lg:min-h-28 lg:flex-col lg:gap-2 ${focoDourado} ${
             categoria === 'todos'
               ? 'border-dourado bg-dourado text-marinho'
               : 'border-creme/25 bg-marinho-superficie text-creme hover:border-dourado'
@@ -63,7 +64,7 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
               type="button"
               aria-pressed={ativa}
               onClick={() => setCategoria(cat.slug)}
-              className={`group relative isolate flex min-h-24 items-end overflow-hidden rounded-sm border-2 text-left transition-colors sm:min-h-28 ${focoDourado} ${
+              className={`group relative isolate flex min-h-24 items-end overflow-hidden rounded-sm border-2 text-left transition-colors lg:min-h-28 ${focoDourado} ${
                 ativa ? 'border-dourado' : 'border-transparent hover:border-dourado/70'
               }`}
             >
@@ -77,7 +78,7 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
                 aria-hidden="true"
                 className={`absolute inset-0 -z-10 bg-gradient-to-t from-marinho/90 via-marinho/45 ${ativa ? 'to-marinho/10' : 'to-marinho/30'}`}
               />
-              <span className="px-3 py-2.5 font-titulo text-lg font-bold uppercase tracking-[0.1em] text-creme">
+              <span className="px-3 py-2.5 font-titulo text-base font-bold uppercase tracking-[0.08em] text-creme min-[400px]:text-lg lg:text-base xl:text-lg">
                 {cat.nome}
               </span>
             </button>
@@ -100,6 +101,7 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
               id="busca-corte"
               type="search"
               value={termo}
+              ref={campoBusca}
               onChange={(e) => setTermo(e.target.value)}
               placeholder={catalogo.buscaPlaceholder}
               autoComplete="off"
@@ -127,7 +129,11 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
           </p>
           <button
             type="button"
-            onClick={() => setTermo('')}
+            onClick={() => {
+              setTermo('');
+              // O botão sai da tela ao limpar: o foco vai para o campo, não para o corpo da página.
+              campoBusca.current?.focus();
+            }}
             className={`inline-flex min-h-12 items-center rounded-sm border-2 border-dourado px-6 font-texto text-base font-semibold text-creme transition-colors hover:bg-dourado hover:text-marinho ${focoDourado}`}
           >
             {catalogo.limparBusca}

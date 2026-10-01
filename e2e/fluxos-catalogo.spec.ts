@@ -45,6 +45,7 @@ test('busca vazia', async ({ page }) => {
   await catalogo(page).getByRole('button', { name: 'Limpar busca' }).click();
   await expect(cards(page)).toHaveCount(24);
   await expect(campo).toHaveValue('');
+  await expect(campo).toBeFocused();
   await expect(catalogo(page).getByText('24 cortes', { exact: true })).toBeVisible();
 });
 

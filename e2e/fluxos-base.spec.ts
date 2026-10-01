@@ -46,7 +46,8 @@ test.describe('sem JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
   test('sem JavaScript o conteúdo aparece', async ({ page }) => {
-    await page.goto('/');
+    // Sem JS o Chrome ignora loading="lazy" e baixa todas as fotos antes do `load`; o teste só precisa do DOM.
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     const titulo = page.locator('h1');
     await expect(titulo).toBeVisible();
     await expect(titulo).toHaveCSS('opacity', '1');
