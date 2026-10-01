@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { Botao } from '@/components/ui/Botao';
+import { focoDouradoEscuro } from '@/components/ui/foco';
 import { Foto } from '@/components/ui/Foto';
 import { home } from '@/content/home';
 import type { Foto as FotoRegistrada } from '@/data/fotos';
@@ -30,8 +31,6 @@ type MapaBoiInterativoProps = {
   svgHtml: string;
   itens: ItemPainel[];
 };
-
-const focoDouradoEscuro = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado-escuro';
 
 /** Prévia de um item: sob o mouse ou com o foco do teclado. */
 type Previa = { slug: string; origem: 'mouse' | 'foco' };

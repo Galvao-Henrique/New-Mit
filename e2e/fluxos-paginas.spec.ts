@@ -49,6 +49,21 @@ test('sitemap sem domínio é vazio e robots libera tudo', async ({ request }) =
   expect(texto).not.toContain('Sitemap');
 });
 
+test('sem domínio, nenhuma página tem endereço canônico', async ({ page }) => {
+  for (const rota of ['/', '/creditos', '/privacidade']) {
+    await page.goto(rota);
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  }
+});
+
+test('foto do hero com prioridade alta e logo do topo sem carregamento preguiçoso', async ({ page }) => {
+  await page.goto('/');
+  const hero = page.locator('#inicio img');
+  await expect(hero).toHaveAttribute('fetchpriority', 'high');
+  await expect(hero).toHaveAttribute('loading', 'eager');
+  await expect(page.locator('header img')).toHaveAttribute('loading', 'eager');
+});
+
 test('créditos e privacidade têm Open Graph próprio e mantêm a imagem', async ({ page }) => {
   for (const [rota, titulo] of [
     ['/creditos', 'Créditos das fotos | Mitata Alimentos'],

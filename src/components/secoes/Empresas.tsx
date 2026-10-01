@@ -3,6 +3,7 @@ import type { Icon } from '@phosphor-icons/react';
 import { Divisor } from '@/components/ui/Divisor';
 import { Foto } from '@/components/ui/Foto';
 import { Revelar } from '@/components/ui/Revelar';
+import { Rotulo } from '@/components/ui/Rotulo';
 import { home } from '@/content/home';
 import { foto } from '@/data/fotos';
 
@@ -20,9 +21,7 @@ export function Empresas() {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-20 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10 lg:pt-28">
         <Revelar className="bg-azul-mitata px-8 py-10 shadow-[0_24px_48px_-20px_rgb(0_0_0/0.8)] sm:px-12 sm:py-12 lg:-mb-24 lg:px-14 lg:py-14">
-          <p className="font-texto text-[13px] font-semibold uppercase tracking-[0.3em] text-creme lg:text-sm">
-            {empresas.rotulo}
-          </p>
+          <Rotulo tom="azul">{empresas.rotulo}</Rotulo>
           <h2
             id="titulo-empresas"
             className="mt-4 break-words font-titulo text-3xl font-bold uppercase leading-tight tracking-[0.06em] text-creme sm:text-4xl lg:text-5xl"

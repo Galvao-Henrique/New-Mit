@@ -2,6 +2,7 @@
 
 import { MagnifyingGlass, SquaresFour } from '@phosphor-icons/react/dist/ssr';
 import { useMemo, useRef, useState } from 'react';
+import { focoDourado } from '@/components/ui/foco';
 import { Foto } from '@/components/ui/Foto';
 import { home, resumoDaPagina } from '@/content/home';
 import type { Foto as FotoRegistrada } from '@/data/fotos';
@@ -19,8 +20,6 @@ type CatalogoInterativoProps = {
   itens: ItemCatalogo[];
   categorias: { categoria: Categoria; foto: FotoRegistrada }[];
 };
-
-const focoDourado = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado';
 
 const botaoPagina =
   'inline-flex min-h-11 items-center justify-center rounded-sm border-2 font-texto text-base font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40';
@@ -136,7 +135,7 @@ export function CatalogoInterativo({ itens, categorias }: CatalogoInterativoProp
               onChange={(e) => mudarTermo(e.target.value)}
               placeholder={catalogo.buscaPlaceholder}
               autoComplete="off"
-              className="min-h-12 w-full rounded-sm border border-creme/30 bg-marinho-superficie pl-12 pr-4 font-texto text-base text-creme placeholder:text-creme/60 focus-visible:border-dourado focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado"
+              className={`min-h-12 w-full rounded-sm border border-creme/30 bg-marinho-superficie pl-12 pr-4 font-texto text-base text-creme placeholder:text-creme/60 focus-visible:border-dourado ${focoDourado}`}
             />
           </div>
         </div>

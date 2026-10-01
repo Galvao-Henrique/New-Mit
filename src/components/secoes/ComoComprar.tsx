@@ -27,7 +27,6 @@ export function ComoComprar() {
         <div className="mt-10 flex justify-center">
           <Botao variante="primario" tom="claro" href={whatsappUrl()} externo>
             {comoComprar.botao}
-            <span className="sr-only"> {home.rodape.abreNovaAba}</span>
           </Botao>
         </div>
         <p className="mt-6 font-texto text-base font-semibold text-tinta">

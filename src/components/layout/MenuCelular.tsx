@@ -3,6 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { List, X } from '@phosphor-icons/react/dist/ssr';
 import { useState } from 'react';
+import { focoDourado } from '@/components/ui/foco';
 import { home } from '@/content/home';
 
 export function MenuCelular({ base = '' }: { base?: string }) {
@@ -12,7 +13,7 @@ export function MenuCelular({ base = '' }: { base?: string }) {
     <Dialog.Root open={aberto} onOpenChange={setAberto}>
       <Dialog.Trigger
         aria-label="Abrir menu"
-        className="inline-flex size-11 items-center justify-center rounded-sm text-creme focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado md:hidden"
+        className={`inline-flex size-11 items-center justify-center rounded-sm text-creme ${focoDourado} md:hidden`}
       >
         <List size={28} aria-hidden="true" />
       </Dialog.Trigger>
@@ -28,7 +29,7 @@ export function MenuCelular({ base = '' }: { base?: string }) {
             </Dialog.Title>
             <Dialog.Close
               aria-label="Fechar menu"
-              className="inline-flex size-11 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado"
+              className={`inline-flex size-11 items-center justify-center rounded-sm ${focoDourado}`}
             >
               <X size={28} aria-hidden="true" />
             </Dialog.Close>
@@ -39,7 +40,7 @@ export function MenuCelular({ base = '' }: { base?: string }) {
                 key={item.href}
                 href={`${base}${item.href}`}
                 onClick={() => setAberto(false)}
-                className="flex min-h-14 items-center border-b border-creme/15 font-titulo text-xl font-semibold uppercase tracking-[0.15em] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado"
+                className={`flex min-h-14 items-center border-b border-creme/15 font-titulo text-xl font-semibold uppercase tracking-[0.15em] ${focoDourado}`}
               >
                 {item.rotulo}
               </a>

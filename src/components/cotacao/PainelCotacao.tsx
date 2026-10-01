@@ -5,12 +5,12 @@ import { WhatsappLogo, X } from '@phosphor-icons/react/dist/ssr';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Botao } from '@/components/ui/Botao';
+import { focoDourado } from '@/components/ui/foco';
 import { site } from '@/config/site';
 import { home } from '@/content/home';
 import { mensagemCotacao, whatsappUrl } from '@/lib/whatsapp';
 import { devolverFoco, useCotacao } from '@/store/cotacao';
 
-const focoDourado = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado';
 const botaoTexto = `inline-flex min-h-11 shrink-0 items-center rounded-sm px-3 font-texto text-base font-semibold ${focoDourado}`;
 const sublinhado = 'underline underline-offset-4';
 
@@ -143,7 +143,7 @@ export function PainelCotacao() {
                   value={observacao}
                   onChange={(e) => definirObservacao(e.target.value)}
                   placeholder={cotacao.observacaoPlaceholder}
-                  className="mt-2 w-full resize-none rounded-sm border border-creme/30 bg-marinho p-3 font-texto text-base text-creme placeholder:text-creme/60 focus-visible:border-dourado focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado"
+                  className={`mt-2 w-full resize-none rounded-sm border border-creme/30 bg-marinho p-3 font-texto text-base text-creme placeholder:text-creme/60 focus-visible:border-dourado ${focoDourado}`}
                 />
                 <Botao
                   variante="primario"

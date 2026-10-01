@@ -1,6 +1,7 @@
 import { Divisor } from '@/components/ui/Divisor';
 import { Foto } from '@/components/ui/Foto';
 import { Revelar } from '@/components/ui/Revelar';
+import { Rotulo } from '@/components/ui/Rotulo';
 import { site } from '@/config/site';
 import { home } from '@/content/home';
 import { foto } from '@/data/fotos';
@@ -21,9 +22,7 @@ export function Compromisso() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
         <Revelar className="-mt-24 max-w-xl bg-azul-mitata px-8 py-10 shadow-[0_24px_48px_-20px_rgb(11_22_51/0.7)] sm:-mt-32 sm:px-12 sm:py-12 lg:-mt-48 lg:px-14 lg:py-14">
-          <p className="font-texto text-[13px] font-semibold uppercase tracking-[0.3em] text-creme lg:text-sm">
-            {compromisso.rotulo}
-          </p>
+          <Rotulo tom="azul">{compromisso.rotulo}</Rotulo>
           <h2
             id="titulo-compromisso"
             className="mt-4 break-words font-titulo text-3xl font-bold uppercase leading-tight tracking-[0.06em] text-creme sm:text-4xl lg:text-5xl"

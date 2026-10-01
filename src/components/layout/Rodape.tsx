@@ -1,6 +1,7 @@
 import { Clock, MapPin, WhatsappLogo } from '@phosphor-icons/react/dist/ssr';
 import { Logo } from '@/components/ui/Logo';
 import { site } from '@/config/site';
+import { comum } from '@/content/comum';
 import { home } from '@/content/home';
 import { whatsappUrl } from '@/lib/whatsapp';
 import { AnoAtual } from './AnoAtual';
@@ -13,12 +14,12 @@ const titulo = 'font-texto text-[13px] font-semibold uppercase tracking-[0.3em] 
 
 export function Rodape({ base = '' }: { base?: string }) {
   const { rodape } = home;
-  const novaAba = <span className="sr-only"> {rodape.abreNovaAba}</span>;
+  const novaAba = <span className="sr-only"> {comum.abreNovaAba}</span>;
   return (
     <footer className="border-t border-dourado/20 bg-marinho text-creme">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.6fr] lg:gap-16 lg:px-10">
         <div>
-          <Logo versao="creme" formato="horizontal" className="h-12 w-auto" />
+          <Logo versao="creme" className="h-12 w-auto" />
           <p className="mt-6 max-w-xs font-texto text-base leading-relaxed text-creme/85">{rodape.resumo}</p>
         </div>
 

@@ -3,17 +3,19 @@ import { logos } from '@/assets/logos';
 
 type LogoProps = {
   versao: 'azul' | 'creme';
-  formato: 'horizontal' | 'circular';
+  /** Logo acima da dobra (no topo): carrega já, sem loading="lazy". */
+  prioritario?: boolean;
   className?: string;
 };
 
-export function Logo({ versao, formato, className }: LogoProps) {
+export function Logo({ versao, prioritario = false, className }: LogoProps) {
   return (
     <Image
-      src={logos[formato][versao]}
+      src={logos[versao]}
       alt="Mitata Alimentos"
       className={className}
       sizes="(min-width: 768px) 240px, 160px"
+      loading={prioritario ? 'eager' : undefined}
     />
   );
 }

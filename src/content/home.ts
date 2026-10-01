@@ -1,9 +1,11 @@
+import { site } from '@/config/site';
+
 /** Textos da página inicial, uma chave por seção. */
 export const home = {
   navegacao: [
-    { rotulo: 'Cortes', href: '#cortes' },
-    { rotulo: 'Sobre', href: '#sobre' },
-    { rotulo: 'Contato', href: '#contato' },
+    { rotulo: 'Cortes', href: `#${site.ancoras.cortes}` },
+    { rotulo: 'Sobre', href: `#${site.ancoras.sobre}` },
+    { rotulo: 'Contato', href: `#${site.ancoras.contato}` },
   ],
   hero: {
     rotulo: 'Atacado de carnes · São José dos Campos',
@@ -57,7 +59,7 @@ export const home = {
     rotulo: 'Sobre a Mitata',
     titulo: 'Nosso compromisso',
     pilares: [
-      { titulo: 'Entrega diária', texto: 'Seu pedido chega todos os dias, em todo o Vale do Paraíba.' },
+      { titulo: 'Entrega diária', texto: 'Entregamos todos os dias, em todo o Vale do Paraíba.' },
       { titulo: 'Qualidade', texto: 'Padrão constante em cada entrega, do primeiro ao último pedido.' },
       {
         titulo: 'Seleção criteriosa',
@@ -91,14 +93,13 @@ export const home = {
   comoComprar: {
     rotulo: 'Contato',
     titulo: 'Como comprar',
-    texto: 'Fale com a gente no WhatsApp: diga os cortes que precisa e receba a sua cotação.',
+    texto: 'Fale com a gente no WhatsApp: diga de quais cortes precisa e receba a sua cotação.',
     botao: 'Chamar no WhatsApp',
     montarLista: 'ou monte sua lista de cotação',
   },
   rodape: {
     rotuloNav: 'Rodapé',
     tituloMenu: 'Menu',
-    abreNovaAba: '(abre em nova aba)',
     resumo: 'Atacado · Entrega diária no Vale do Paraíba',
     creditos: 'Créditos das fotos',
     privacidade: 'Privacidade',

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { BarraCotacao } from '@/components/cotacao/BarraCotacao';
 import { CotacaoHidratacao } from '@/components/cotacao/CotacaoHidratacao';
 import { PainelCotacao } from '@/components/cotacao/PainelCotacao';
@@ -11,6 +12,10 @@ import { Essencia } from '@/components/secoes/Essencia';
 import { Hero } from '@/components/secoes/Hero';
 import { Catalogo } from '@/components/secoes/catalogo/Catalogo';
 import { MapaBoi } from '@/components/secoes/mapa/MapaBoi';
+import { canonico } from '@/lib/seo';
+
+// Na página, não no layout: o 404 não deve herdar o canônico da página inicial.
+export const metadata: Metadata = { alternates: canonico('/') };
 
 export default function Home() {
   return (

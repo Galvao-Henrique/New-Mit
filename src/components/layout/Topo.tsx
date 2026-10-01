@@ -1,13 +1,14 @@
 'use client';
 
 import { WhatsappLogo } from '@phosphor-icons/react/dist/ssr';
+import { focoDourado } from '@/components/ui/foco';
 import { Logo } from '@/components/ui/Logo';
+import { site } from '@/config/site';
+import { comum } from '@/content/comum';
 import { home } from '@/content/home';
 import { whatsappUrl } from '@/lib/whatsapp';
 import { useCotacao } from '@/store/cotacao';
 import { MenuCelular } from './MenuCelular';
-
-const focoDourado = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado';
 
 type TopoProps = {
   /** Mostra o botão "Cotação (n)"; só onde o painel de cotação está montado. */
@@ -28,11 +29,12 @@ export function Topo({ comCotacao = true, base = '' }: TopoProps) {
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-10">
         <a
-          href={`${base}#inicio`}
+          href={`${base}#${site.ancoras.inicio}`}
           aria-label="Mitata Alimentos, início"
           className={`shrink-0 rounded-sm ${focoDourado}`}
         >
-          <Logo versao="creme" formato="horizontal" className="h-8 w-auto sm:h-10" />
+          {/* Acima da dobra em toda página: sem carregamento preguiçoso. */}
+          <Logo versao="creme" prioritario className="h-8 w-auto sm:h-10" />
         </a>
 
         <nav aria-label="Principal" className="hidden items-center gap-10 md:flex">
@@ -63,7 +65,7 @@ export function Topo({ comCotacao = true, base = '' }: TopoProps) {
             href={whatsappUrl()}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Falar no WhatsApp"
+            aria-label={`Falar no WhatsApp ${comum.abreNovaAba}`}
             className={`inline-flex size-11 items-center justify-center rounded-sm text-creme transition-colors hover:text-dourado ${focoDourado}`}
           >
             <WhatsappLogo size={26} weight="fill" aria-hidden="true" />

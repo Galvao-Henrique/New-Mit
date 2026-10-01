@@ -8,7 +8,6 @@ export const institucional = {
     autor: 'Foto de',
     licenca: 'Licença',
     verOrigem: 'Ver no',
-    abreNovaAba: '(abre em nova aba)',
   },
   privacidade: {
     titulo: 'Privacidade',

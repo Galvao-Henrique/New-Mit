@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { PaginaSecundaria } from '@/components/layout/PaginaSecundaria';
 import { institucional } from '@/content/institucional';
 import { openGraphDaPagina } from '@/lib/og';
+import { canonico } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: `${institucional.privacidade.titulo} | Mitata Alimentos`,
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
     `${institucional.privacidade.titulo} | Mitata Alimentos`,
     institucional.privacidade.intro,
   ),
+  alternates: canonico('/privacidade'),
 };
 
 export default function Privacidade() {

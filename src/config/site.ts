@@ -7,7 +7,6 @@
  */
 export const site = {
   nome: 'Mitata Alimentos',
-  nomeCurto: 'MITATA',
 
   /** Domínio público, sem barra no final. */
   dominio: '[DOMÍNIO]',
@@ -55,8 +54,6 @@ export const site = {
     contato: 'contato',
   },
 } as const;
-
-export type Site = typeof site;
 
 /** Indica se um valor de configuração ainda é um marcador `[...]`. */
 export function pendente(valor: string): boolean {

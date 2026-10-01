@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { pendente, site } from '@/config/site';
 
 /** Endereço público do site, sem barra no final; `null` enquanto o domínio estiver pendente. */
@@ -20,6 +21,15 @@ export function baseDosMetadados(
   const vercel = env.VERCEL_PROJECT_PRODUCTION_URL;
   if (vercel) return new URL(`https://${vercel}`);
   return new URL('http://localhost:3217');
+}
+
+/** Endereço canônico da página (`alternates` dos metadados); nenhum enquanto o domínio estiver pendente. */
+export function canonico(
+  caminho: string,
+  dominioConfigurado: string = site.dominio,
+): Metadata['alternates'] | undefined {
+  const url = urlDoSite(dominioConfigurado);
+  return url ? { canonical: `${url}${caminho}` } : undefined;
 }
 
 /** Dados estruturados (LocalBusiness). Campos pendentes ou desconhecidos ficam de fora. */

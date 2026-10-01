@@ -8,5 +8,3 @@ export const cores = {
   creme: '#f4ede1',
   tinta: '#1a1d29',
 } as const;
-
-export type NomeCor = keyof typeof cores;

@@ -8,30 +8,32 @@ A página inicial reúne: apresentação, diferenciais, o **mapa do boi** (cliqu
 
 ## Comandos
 
-| Comando                             | O que faz                                                                                                                                            |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm install`                      | Instala as dependências (uma vez).                                                                                                                   |
-| `pnpm dev`                          | Abre o site para desenvolvimento (o endereço aparece no terminal). Se a porta 3000 já estiver em uso por outro programa, use `pnpm dev --port 3217`. |
-| `pnpm build`                        | Gera a versão de produção.                                                                                                                           |
-| `pnpm start`                        | Serve a versão de produção (rode `pnpm build` antes).                                                                                                |
-| `pnpm lint`                         | Confere o estilo e erros comuns do código.                                                                                                           |
-| `pnpm typecheck`                    | Confere os tipos do TypeScript.                                                                                                                      |
-| `pnpm test`                         | Testes rápidos (dados, mapa do boi, fotos).                                                                                                          |
-| `pnpm test:e2e`                     | Testes no navegador, inclusive acessibilidade. Usa a porta 3217 e sobe o servidor sozinho. Precisa do `pnpm build` feito antes.                      |
-| `pnpm format` / `pnpm format:check` | Formata o código / só confere a formatação.                                                                                                          |
-| `pnpm fotos`                        | Baixa e otimiza as fotos listadas em `src/data/fotos.json`.                                                                                          |
-| `pnpm logo` / `pnpm og`             | Gera a logo clara e a imagem de compartilhamento.                                                                                                    |
-| `pnpm prints`                       | Tira as capturas de tela (390, 768 e 1440 px) em `docs/prints/etapa-N/`. Use `$env:ETAPA='5'; pnpm prints` no PowerShell para escolher a pasta.      |
+| Comando                             | O que faz                                                                                                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`                      | Instala as dependências (uma vez).                                                                                                                                                                |
+| `pnpm dev`                          | Abre o site para desenvolvimento (o endereço aparece no terminal). Se a porta 3000 já estiver em uso por outro programa, use `pnpm dev --port 3217`.                                              |
+| `pnpm build`                        | Gera a versão de produção.                                                                                                                                                                        |
+| `pnpm start`                        | Serve a versão de produção (rode `pnpm build` antes).                                                                                                                                             |
+| `pnpm lint`                         | Confere o estilo e erros comuns do código.                                                                                                                                                        |
+| `pnpm typecheck`                    | Confere os tipos do TypeScript.                                                                                                                                                                   |
+| `pnpm test`                         | Testes rápidos (dados, mapa do boi, fotos).                                                                                                                                                       |
+| `pnpm test:e2e`                     | Testes no navegador, inclusive acessibilidade. Usa a porta 3217 e sobe o servidor sozinho. Precisa do `pnpm build` feito antes.                                                                   |
+| `pnpm format` / `pnpm format:check` | Formata o código / só confere a formatação.                                                                                                                                                       |
+| `pnpm fotos`                        | Baixa e otimiza as fotos listadas em `src/data/fotos.json`.                                                                                                                                       |
+| `pnpm logo` / `pnpm og`             | Gera a logo clara e a imagem de compartilhamento.                                                                                                                                                 |
+| `pnpm prints`                       | Tira as capturas de tela (390, 768 e 1440 px) em `docs/prints/etapa-N/`. Para escolher a pasta: `$env:ETAPA='5'; pnpm prints` no PowerShell, ou `ETAPA=5 pnpm prints` no Git Bash, macOS e Linux. |
 
 **Atenção em computador fraco:** o `pnpm dev` é pesado e pode travar a máquina. Prefira `pnpm build` seguido de `pnpm start`, que usa bem menos memória. Rode um comando pesado de cada vez e feche o servidor ao terminar.
 
 ## Trocar o desenho do boi
 
 1. Salve o SVG feito no Claude Design em `src/assets/mapa/boi.svg` (substitui o atual).
-2. Rode `pnpm test`.
-3. Se algo estiver fora do combinado, o teste falha com uma mensagem dizendo o que ajustar (peça faltando, atributo proibido etc.). Leia a mensagem, corrija o SVG e rode de novo.
+2. Rode `pnpm test`. Se algo estiver fora do combinado, o teste falha com uma mensagem dizendo o que ajustar (peça faltando, atributo proibido etc.). Leia a mensagem, corrija o SVG e rode de novo.
+3. Rode `pnpm build` e depois `pnpm test:e2e`. Eles conferem no navegador o que o `pnpm test` não vê: cada peça aparece, recebe o mouse e o toque (nenhuma fica escondida atrás de outra) e se destaca.
 
-As regras que o desenho precisa cumprir (nome de cada peça, o que é permitido) estão em [`docs/contrato-mapa-boi.md`](docs/contrato-mapa-boi.md).
+**Cuidado com otimizadores de SVG:** o SVGOMG e o SVGO, com as opções padrão, apagam os `id` das peças (opção "Clean up IDs") e juntam grupos (opção "Collapse groups"). Desligue essas duas opções antes de otimizar o arquivo; senão o mapa perde as peças (o `pnpm test` acusa).
+
+As regras que o desenho precisa cumprir (nome de cada peça, ordem no arquivo, o que é permitido) estão em [`docs/contrato-mapa-boi.md`](docs/contrato-mapa-boi.md).
 
 ## Adicionar ou trocar uma foto
 
@@ -39,6 +41,7 @@ As regras que o desenho precisa cumprir (nome de cada peça, o que é permitido)
 - **Baixar:** rode `pnpm fotos`. O script salva em `public/fotos/` e pula as que já existem. Para **trocar** uma foto existente, apague o arquivo dela em `public/fotos/` e rode o comando de novo.
 - **Dar uma foto própria a um corte:** em `src/data/cortes.ts`, coloque no corte o campo `foto: 'id-da-foto'`, com o `id` cadastrado no `fotos.json`. Cortes sem esse campo usam a foto da categoria.
 - **Créditos:** a página `/creditos` lê o `fotos.json`, então se atualiza sozinha. Mantenha `autor` e `origem` corretos.
+- **Foto do hero:** a imagem de compartilhamento (Open Graph) é feita a partir dela. Depois de trocar a foto `hero`, rode `pnpm og` para gerar a imagem de novo.
 
 ## Domínio, CEP e coordenadas
 

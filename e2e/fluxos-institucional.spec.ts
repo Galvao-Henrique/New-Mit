@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -74,9 +74,24 @@ test('rodapé', async ({ page }) => {
   await expect(rodape.getByRole('navigation', { name: 'Rodapé' })).toBeVisible();
 });
 
+/** Confere o link externo: nova aba, e o nome acessível começa pelo texto visível e avisa uma única vez. */
+async function conferirLinkExterno(link: Locator, visivel: string) {
+  await expect(link).toHaveAttribute('target', '_blank');
+  await expect(link).toHaveAttribute('rel', /noopener/);
+  await expect(link).toContainText('(abre em nova aba)');
+  const texto = (await link.evaluate((el) => el.textContent ?? '')).trim();
+  expect(texto.startsWith(visivel)).toBe(true);
+  expect(texto.split('(abre em nova aba)')).toHaveLength(2);
+  await expect(link).toHaveAccessibleName(new RegExp(`^${visivel.replace(/[()+]/g, '\\$&')}.*\\(abre em nova aba\\)`));
+}
+
 test('links externos abrem em nova aba com aviso acessível', async ({ page }) => {
   await page.goto('/');
   const casos = [
+    {
+      link: page.locator('#inicio').getByRole('link', { name: /^Cotação pelo WhatsApp/ }),
+      visivel: 'Cotação pelo WhatsApp',
+    },
     {
       link: page.locator('#contato').getByRole('link', { name: /^Chamar no WhatsApp/ }),
       visivel: 'Chamar no WhatsApp',
@@ -84,16 +99,31 @@ test('links externos abrem em nova aba com aviso acessível', async ({ page }) =
     { link: page.locator('footer').getByRole('link', { name: /^Rua Adolpho Goll/ }), visivel: 'Rua Adolpho Goll' },
     { link: page.locator('footer').getByRole('link', { name: /^\(12\) 99705-2003/ }), visivel: '(12) 99705-2003' },
   ];
-  for (const { link, visivel } of casos) {
-    await expect(link).toHaveAttribute('target', '_blank');
-    await expect(link).toHaveAttribute('rel', /noopener/);
-    await expect(link).toContainText('(abre em nova aba)');
-    const nome = await link.evaluate((el) => el.textContent ?? '');
-    expect(nome.trim().startsWith(visivel)).toBe(true);
-    await expect(link).toHaveAccessibleName(
-      new RegExp(`^${visivel.replace(/[()+]/g, '\\$&')}.*\\(abre em nova aba\\)`),
-    );
-  }
+  for (const { link, visivel } of casos) await conferirLinkExterno(link, visivel);
+
+  // Ícone do WhatsApp no topo: sem texto visível, o aviso vai no aria-label.
+  const icone = page.locator('header').getByRole('link', { name: 'Falar no WhatsApp (abre em nova aba)', exact: true });
+  await expect(icone).toHaveAttribute('target', '_blank');
+  await expect(icone).toHaveAttribute('rel', /noopener/);
+});
+
+test('Enviar pelo WhatsApp avisa que abre em nova aba', async ({ page }) => {
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      'mitata-site-cotacao',
+      '{"state":{"itens":[{"corteSlug":"moela","nome":"Moela","subcategoria":"Aves"}],"observacao":""},"version":1}',
+    ),
+  );
+  await abrirHidratada(page);
+  await page.locator('header [data-cotacao-topo]').click();
+  const painel = page.getByRole('dialog', { name: 'Sua lista de cotação' });
+  await conferirLinkExterno(painel.getByRole('link', { name: /^Enviar pelo WhatsApp/ }), 'Enviar pelo WhatsApp');
+});
+
+test('textos revisados de Compromisso e Como comprar', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#sobre')).toContainText('Entregamos todos os dias, em todo o Vale do Paraíba.');
+  await expect(page.locator('#contato')).toContainText('diga de quais cortes precisa');
 });
 
 test('compromisso tem os quatro pilares', async ({ page }) => {

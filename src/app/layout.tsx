@@ -5,19 +5,22 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { baseDosMetadados, dadosEstruturados } from '@/lib/seo';
 import './globals.css';
 
+// Só os pesos usados (font-semibold e font-bold); o 500 não aparece em nenhuma classe.
 const zilla = Zilla_Slab({
   subsets: ['latin'],
-  weight: ['500', '600', '700'],
+  weight: ['600', '700'],
   display: 'swap',
   variable: '--font-zilla',
 });
 
+// Números e detalhes abaixo da dobra: sem pré-carregamento, para não disputar com o hero.
 const playfair = Playfair_Display({
   subsets: ['latin'],
   weight: ['400', '600'],
   style: 'italic',
   display: 'swap',
   variable: '--font-playfair',
+  preload: false,
 });
 
 const source = Source_Sans_3({

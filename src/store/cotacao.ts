@@ -79,7 +79,9 @@ export const useCotacao = create<EstadoCotacao>()(
       partialize: ({ itens, observacao }) => ({ itens, observacao }),
       // Reidratado no cliente depois da hidratação do React.
       skipHydration: true,
-      migrate: (salvo, versao) => (versao === 1 ? (salvo as never) : {}),
+      // O zustand só chama migrate quando a versão salva difere da atual. Não houve outra versão da lista:
+      // o que vier de uma versão diferente é descartado (o merge abaixo valida o resto).
+      migrate: () => ({}),
       merge: (salvo, atual) => {
         const s = salvo as { itens?: unknown; observacao?: unknown } | undefined;
         return {

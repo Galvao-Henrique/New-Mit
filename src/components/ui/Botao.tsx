@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { comum } from '@/content/comum';
 
 type BotaoProps = {
   variante: 'primario' | 'contorno';
@@ -7,6 +8,7 @@ type BotaoProps = {
   children: ReactNode;
   href?: string;
   onClick?: () => void;
+  /** Abre em nova aba; o aviso "(abre em nova aba)" entra no nome acessível, depois do texto visível. */
   externo?: boolean;
   /** Nome acessível completo; deve começar pelo texto visível (ex.: "Adicionar à cotação: Pá de Boi"). */
   rotuloAcessivel?: string;
@@ -48,10 +50,11 @@ export function Botao({
         href={href}
         className={classes}
         onClick={onClick}
-        aria-label={rotuloAcessivel}
+        aria-label={externo && rotuloAcessivel ? `${rotuloAcessivel} ${comum.abreNovaAba}` : rotuloAcessivel}
         {...(externo ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         {children}
+        {externo && <span className="sr-only"> {comum.abreNovaAba}</span>}
       </a>
     );
   }

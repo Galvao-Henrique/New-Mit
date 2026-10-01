@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { baseDosMetadados, dadosEstruturados, urlDoSite } from './seo';
+import { baseDosMetadados, canonico, dadosEstruturados, urlDoSite } from './seo';
 
 describe('urlDoSite com domínio definido', () => {
   it('acrescenta https e tira a barra final', () => {
@@ -23,6 +23,20 @@ describe('baseDosMetadados', () => {
   });
   it('sem domínio nem Vercel, usa o endereço local de testes', () => {
     expect(baseDosMetadados({}, '[DOMÍNIO]').href).toBe('http://localhost:3217/');
+  });
+});
+
+describe('canonico', () => {
+  it('com domínio, aponta para o endereço completo da página', () => {
+    expect(canonico('/', 'mitata.com.br')).toEqual({ canonical: 'https://mitata.com.br/' });
+    expect(canonico('/creditos', 'mitata.com.br/')).toEqual({ canonical: 'https://mitata.com.br/creditos' });
+    expect(canonico('/privacidade', 'https://mitata.com.br')).toEqual({
+      canonical: 'https://mitata.com.br/privacidade',
+    });
+  });
+  it('com o domínio pendente, não declara endereço canônico', () => {
+    expect(canonico('/', '[DOMÍNIO]')).toBeUndefined();
+    expect(canonico('/creditos')).toBeUndefined();
   });
 });
 

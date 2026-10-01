@@ -13,7 +13,6 @@ export interface Corte {
 export interface Categoria {
   slug: CategoriaSlug;
   nome: string;
-  descricao: string;
   /** Id da foto em `fotos.json`. */
   foto: string;
 }

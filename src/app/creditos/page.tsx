@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
 import { PaginaSecundaria } from '@/components/layout/PaginaSecundaria';
+import { comum } from '@/content/comum';
 import { institucional } from '@/content/institucional';
 import { fotos } from '@/data/fotos';
 import { openGraphDaPagina } from '@/lib/og';
+import { canonico } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: `${institucional.creditos.titulo} | Mitata Alimentos`,
   description: institucional.creditos.intro,
   openGraph: openGraphDaPagina(`${institucional.creditos.titulo} | Mitata Alimentos`, institucional.creditos.intro),
+  alternates: canonico('/creditos'),
 };
 
 export default function Creditos() {
@@ -28,7 +31,7 @@ export default function Creditos() {
               className="inline-flex min-h-11 items-center font-texto text-base font-semibold text-dourado-escuro underline underline-offset-4 hover:text-tinta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-dourado-escuro"
             >
               {t.verOrigem} {foto.licenca}
-              <span className="sr-only"> {t.abreNovaAba}</span>
+              <span className="sr-only"> {comum.abreNovaAba}</span>
             </a>
           </li>
         ))}

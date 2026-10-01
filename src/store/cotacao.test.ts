@@ -61,6 +61,29 @@ describe('useCotacao', () => {
   });
 });
 
+describe('lista salva no navegador', () => {
+  const moela = { corteSlug: 'moela', nome: 'Moela', subcategoria: 'Aves' };
+  const salvar = (version: number) =>
+    localStorage.setItem(
+      'mitata-site-cotacao',
+      JSON.stringify({ state: { itens: [moela], observacao: 'Entrega às terças.' }, version }),
+    );
+
+  it('na versão atual (1), volta ao recarregar', async () => {
+    salvar(1);
+    await useCotacao.persist.rehydrate();
+    expect(useCotacao.getState().itens).toEqual([moela]);
+    expect(useCotacao.getState().observacao).toBe('Entrega às terças.');
+  });
+
+  it('numa versão anterior (0), é descartada', async () => {
+    salvar(0);
+    await useCotacao.persist.rehydrate();
+    expect(useCotacao.getState().itens).toEqual([]);
+    expect(useCotacao.getState().observacao).toBe('');
+  });
+});
+
 describe('descartarDesconhecidos', () => {
   it('descarta itens de cortes que não existem mais e entradas inválidas', () => {
     const slugs = new Set(['boi-casado']);
