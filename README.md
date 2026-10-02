@@ -27,13 +27,12 @@ A página inicial reúne: apresentação, diferenciais, o **mapa do boi** (cliqu
 
 ## Trocar o desenho do boi
 
-1. Salve o SVG feito no Claude Design em `src/assets/mapa/boi.svg` (substitui o atual).
-2. Rode `pnpm test`. Se algo estiver fora do combinado, o teste falha com uma mensagem dizendo o que ajustar (peça faltando, atributo proibido etc.). Leia a mensagem, corrija o SVG e rode de novo.
-3. Rode `pnpm build` e depois `pnpm test:e2e`. Eles conferem no navegador o que o `pnpm test` não vê: cada peça aparece, recebe o mouse e o toque (nenhuma fica escondida atrás de outra) e se destaca.
+O mapa usa dois arquivos em `src/assets/mapa/`: `boi.png` (o desenho, com os nomes dos cortes) e `boi.svg` (as áreas clicáveis de cada peça, por cima do desenho). Os dois são gerados a partir do SVG exportado do Claude Design:
 
-**Cuidado com otimizadores de SVG:** o SVGOMG e o SVGO, com as opções padrão, apagam os `id` das peças (opção "Clean up IDs") e juntam grupos (opção "Collapse groups"). Desligue essas duas opções antes de otimizar o arquivo; senão o mapa perde as peças (o `pnpm test` acusa).
+1. Rode `pnpm boi caminho/do/arquivo.svg` (por exemplo, `pnpm boi C:\Users\User\Downloads\boi_cortes.svg`). O script separa o desenho, recorta as bordas vazias e agrupa os cortes nas peças vendidas: Dianteiro, Pá e Traseiro. Se o desenho tiver um corte que o script não conhece (ou faltar algum), ele para e diz qual. A tabela de cortes de cada peça fica no começo de `scripts/importar-boi.mjs`.
+2. Rode `pnpm test`, `pnpm build` e `pnpm test:e2e`. Eles conferem o arquivo e, no navegador, que cada peça aparece, recebe o mouse e o toque e se destaca.
 
-As regras que o desenho precisa cumprir (nome de cada peça, ordem no arquivo, o que é permitido) estão em [`docs/contrato-mapa-boi.md`](docs/contrato-mapa-boi.md).
+As regras que o SVG do Claude Design precisa cumprir estão em [`docs/contrato-mapa-boi.md`](docs/contrato-mapa-boi.md).
 
 ## Adicionar ou trocar uma foto
 

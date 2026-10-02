@@ -1,46 +1,29 @@
-# Mapa do boi: texto para o Claude Design
+# Mapa do boi: como o desenho entra no site
 
-Cole o bloco abaixo no Claude Design. Depois exporte o resultado como **SVG** e salve em `src/assets/mapa/boi.svg`, substituindo o provisório. Rode `pnpm test`: se algo estiver fora do contrato, o teste diz o quê.
+O desenho vem do Claude Design como **um SVG** com:
 
----
+- a ilustração do boi embutida como imagem PNG (`<image href="data:image/png;base64,...">`), com os nomes dos cortes escritos nela;
+- um `<path>` transparente por corte, com o `id` do corte (ex.: `id="picanha"`), cobrindo a área dele na ilustração.
 
-```
-Desenhe a ilustração de um boi de corte, de perfil (virado para a esquerda), com aparência 3D:
-volume sombreado em degradê, luz vindo da esquerda e leve sombra no chão.
-Estilo elegante, para o site de um atacadista de carnes.
+Para usar um desenho novo, rode `pnpm boi caminho/do/arquivo.svg`. O script `scripts/importar-boi.mjs`:
 
-Paleta:
-- fundo transparente (o site coloca o fundo creme #F4EDE1);
-- corpo em tons de azul-marinho (#0B1633, #14244D, #1B3C91);
-- detalhes e linhas de divisão entre as peças em dourado (#C9A45C).
+1. salva a ilustração em `src/assets/mapa/boi.png`, sem metadados e sem as bordas vazias;
+2. gera `src/assets/mapa/boi.svg` com as áreas agrupadas nas peças que a Mitata vende (`peca-dianteiro`, `peca-pa`, `peca-traseiro`), no mesmo enquadramento da imagem.
 
-O corpo deve estar dividido nas peças de corte, cada uma como um grupo SVG separado,
-com exatamente estes ids:
-- peca-dianteiro: quarto dianteiro (pescoço, acém, peito), SEM a pá
-- peca-pa: a pá / paleta (ombro), na região do dianteiro
-- peca-traseiro: quarto traseiro (lombo, alcatra, coxão)
-- peca-lingua: a língua, visível na boca
-- peca-figado: o fígado, desenhado em transparência na posição anatômica
-- peca-rumen: o rúmen, desenhado em transparência na posição anatômica
+## Cortes de cada peça
 
-Regras técnicas obrigatórias:
-1. Um único arquivo SVG com viewBox, sem width/height fixos.
-2. Cada grupo <g id="peca-..."> contém só as formas daquela peça (inclusive o sombreado dela).
-   Os grupos de peça ficam lado a lado: nenhum fica dentro do outro (a pá não vai dentro do dianteiro).
-3. Ordem no arquivo: peca-pa e os miúdos (peca-lingua, peca-figado, peca-rumen) vêm DEPOIS de
-   peca-dianteiro e peca-traseiro, para ficarem por cima dos quartos e poderem ser clicados.
-4. Cabeça, patas, rabo, contorno e sombra no chão ficam FORA dos grupos de peças.
-5. Nenhum texto dentro do SVG.
-6. Sem imagens embutidas (PNG/JPG), sem <script>, sem <style> (cores e estilos como atributos
-   de apresentação, ex.: fill="#1B3C91"), sem fontes externas. Não use o id "mapa-destaque" (é do site).
-7. Tamanho máximo de 150 KB.
-```
+| Peça (tabela de preços) | Cortes do desenho                                                                                                                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dianteiro de Boi        | pescoço, cupim, acém, peito (com a Pá, ver abaixo)                                                                                                                                        |
+| Pá de Boi               | paleta, músculo dianteiro                                                                                                                                                                 |
+| Traseiro de Boi         | costela, ponta de agulha, bife do vazio, capa de filé, ponta de contrafilé, bisteca, contrafilé, filé mignon, picanha, fraldinha, alcatra, maminha, coxão mole, coxão duro, lagarto, patinho, músculo traseiro |
 
----
+Os ids aceitos são os da tabela em `scripts/importar-boi.mjs` (ex.: `ponta-de-agulha`, `coxao-duro`). Um corte novo no desenho precisa entrar nessa tabela.
 
-## O que o site faz com o arquivo
+## O que o site faz com os arquivos
 
-- Ao passar o mouse, tocar ou focar pelo teclado numa peça, ela se ergue um pouco e ganha brilho dourado e sombra, e as outras escurecem.
-- Os nomes dos cortes aparecem no painel ao lado, em HTML. Por isso o SVG não leva texto.
-- O Dianteiro de Boi destaca `peca-dianteiro` junto com a `peca-pa`.
-- O Boi Casado destaca o dianteiro, a pá e o traseiro.
+- `boi.png` fica por baixo; o `boi.svg`, por cima, com as áreas transparentes.
+- Ao passar o mouse, tocar ou focar pelo teclado numa peça, ela ganha um véu dourado com brilho, e as outras ficam esmaecidas.
+- O Dianteiro de Boi destaca `peca-dianteiro` junto com a `peca-pa`; o Boi Casado destaca as três.
+- Língua, fígado e rúmen não aparecem no desenho: ficam só na lista ao lado do mapa.
+- No build, `prepararSvgBoi` (`src/lib/mapa.ts`) confere o `boi.svg`: viewBox, as três peças (grupos `<g>`, nenhum dentro do outro), nada de `<script>`, `<style>`, `<text>`, `<image>`, atributos `on...` ou referências externas, e no máximo 150 KB. O id `mapa-destaque` é reservado para o brilho do site.

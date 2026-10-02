@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import desenhoDoBoi from '@/assets/mapa/boi.png';
 import { Divisor } from '@/components/ui/Divisor';
 import { Revelar } from '@/components/ui/Revelar';
 import { Rotulo } from '@/components/ui/Rotulo';
@@ -41,7 +42,7 @@ export function MapaBoi() {
           <Divisor tom="claro" className="mt-6" />
           <p className="mt-6 font-texto text-lg leading-relaxed text-tinta/80">{mapa.apoio}</p>
         </Revelar>
-        <MapaBoiInterativo svgHtml={svgDoBoi()} itens={itensDoPainel()} />
+        <MapaBoiInterativo svgHtml={svgDoBoi()} desenhoDoBoi={desenhoDoBoi} itens={itensDoPainel()} />
       </div>
     </section>
   );

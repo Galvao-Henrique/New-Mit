@@ -11,6 +11,7 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from 'react';
+import Image, { type StaticImageData } from 'next/image';
 import { flushSync } from 'react-dom';
 import { Botao } from '@/components/ui/Botao';
 import { focoDouradoEscuro } from '@/components/ui/foco';
@@ -27,15 +28,17 @@ export interface ItemPainel extends ItemMapa {
 }
 
 type MapaBoiInterativoProps = {
-  /** SVG já validado e preparado por `prepararSvgBoi` no build. */
+  /** SVG já validado e preparado por `prepararSvgBoi` no build: as áreas clicáveis das peças. */
   svgHtml: string;
+  /** O desenho do boi (com os nomes dos cortes), por baixo das áreas e no mesmo enquadramento do viewBox. */
+  desenhoDoBoi: StaticImageData;
   itens: ItemPainel[];
 };
 
 /** Prévia de um item: sob o mouse ou com o foco do teclado. */
 type Previa = { slug: string; origem: 'mouse' | 'foco' };
 
-export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
+export function MapaBoiInterativo({ svgHtml, desenhoDoBoi, itens }: MapaBoiInterativoProps) {
   const { mapa } = home;
   const [sobre, setSobre] = useState<Previa | null>(null);
   /** Item escolhido por clique, toque, Enter ou Espaço. */
@@ -53,13 +56,14 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
   // Mesmo objeto entre renderizações: o SVG injetado nunca é recolocado (e o estado no DOM não se perde).
   const svgInjetado = useMemo(() => ({ __html: svgHtml }), [svgHtml]);
 
-  // Destaque das peças: ativo/inativo enquanto algo é exibido; sem atributo quando nada é.
+  // Destaque das peças: ativo/inativo enquanto algo do desenho é exibido; sem atributo quando nada é
+  // (ou quando é um miúdo, que não aparece no desenho).
   useEffect(() => {
     const destaca = itens.find((i) => i.corteSlug === slugExibido)?.destaca;
     const pecaFixa = itens.find((i) => i.corteSlug === fixo)?.peca;
     for (const g of desenho.current?.querySelectorAll<SVGGElement>('[data-peca]') ?? []) {
       const peca = g.dataset.peca as Peca;
-      if (destaca) g.setAttribute('data-estado', destaca.includes(peca) ? 'ativo' : 'inativo');
+      if (destaca?.length) g.setAttribute('data-estado', destaca.includes(peca) ? 'ativo' : 'inativo');
       else g.removeAttribute('data-estado');
       g.setAttribute('aria-pressed', String(peca === pecaFixa));
     }
@@ -130,17 +134,21 @@ export function MapaBoiInterativo({ svgHtml, itens }: MapaBoiInterativoProps) {
         (contrato: sem <script>, <style>, atributos on... ou referências externas). É uma checagem de contrato
         para esse arquivo, não um sanitizador genérico: não use este caminho para SVG de fora.
       */}
-      <div
-        ref={desenho}
-        role="group"
-        aria-label={mapa.rotuloDesenho}
-        className="mapa-boi lg:col-span-7"
-        onPointerOver={aoPassarNoDesenho}
-        onPointerLeave={aoSairComMouse}
-        onClick={aoClicarNoDesenho}
-        onKeyDown={aoTeclarNoDesenho}
-        dangerouslySetInnerHTML={svgInjetado}
-      />
+      <div className="relative lg:col-span-7">
+        {/* Decorativo: os cortes estão no painel e nas peças (botões) do SVG por cima. */}
+        <Image src={desenhoDoBoi} alt="" unoptimized draggable={false} className="block h-auto w-full select-none" />
+        <div
+          ref={desenho}
+          role="group"
+          aria-label={mapa.rotuloDesenho}
+          className="mapa-boi absolute inset-0"
+          onPointerOver={aoPassarNoDesenho}
+          onPointerLeave={aoSairComMouse}
+          onClick={aoClicarNoDesenho}
+          onKeyDown={aoTeclarNoDesenho}
+          dangerouslySetInnerHTML={svgInjetado}
+        />
+      </div>
 
       <div className="lg:col-span-5">
         <div className="overflow-hidden rounded-sm border border-dourado-escuro/25 bg-creme shadow-[0_18px_40px_-24px_rgb(11_22_51/0.45)]">

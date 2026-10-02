@@ -1,14 +1,17 @@
 import { cortes } from './cortes';
 
-/** Peças do `src/assets/mapa/boi.svg`: cada uma é um `<g id="peca-…">`. */
-export const PECAS = ['dianteiro', 'pa', 'traseiro', 'lingua', 'figado', 'rumen'] as const;
+/**
+ * Peças do `src/assets/mapa/boi.svg`: cada uma é um `<g id="peca-…">` com os cortes do desenho que ela inclui
+ * (veja scripts/importar-boi.mjs). Os miúdos não aparecem no desenho: ficam só na lista do painel.
+ */
+export const PECAS = ['dianteiro', 'pa', 'traseiro'] as const;
 export type Peca = (typeof PECAS)[number];
 
 export interface ItemMapa {
   corteSlug: string;
-  /** Peça do desenho que representa o corte; `null` para o item que só aparece no painel. */
+  /** Peça do desenho que representa o corte; `null` para o item que só aparece na lista do painel. */
   peca: Peca | null;
-  /** Peças destacadas quando o item está em exibição. */
+  /** Peças destacadas quando o item está em exibição; vazio para os miúdos (o desenho fica como está). */
   destaca: readonly Peca[];
 }
 
@@ -18,9 +21,9 @@ export const itensMapa: ItemMapa[] = [
   { corteSlug: 'dianteiro-de-boi', peca: 'dianteiro', destaca: ['dianteiro', 'pa'] },
   { corteSlug: 'pa-de-boi', peca: 'pa', destaca: ['pa'] },
   { corteSlug: 'traseiro-de-boi', peca: 'traseiro', destaca: ['traseiro'] },
-  { corteSlug: 'figado-de-bovino', peca: 'figado', destaca: ['figado'] },
-  { corteSlug: 'lingua-bovina', peca: 'lingua', destaca: ['lingua'] },
-  { corteSlug: 'rumen-de-bovino', peca: 'rumen', destaca: ['rumen'] },
+  { corteSlug: 'figado-de-bovino', peca: null, destaca: [] },
+  { corteSlug: 'lingua-bovina', peca: null, destaca: [] },
+  { corteSlug: 'rumen-de-bovino', peca: null, destaca: [] },
 ];
 
 export function itemDaPeca(p: Peca): ItemMapa {

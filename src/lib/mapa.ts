@@ -4,8 +4,8 @@
  *
  * Cada peça sai assim:
  *   <g id="peca-x" role="button" tabindex="0" aria-label="…" data-peca="x">
- *     <g data-mapa-visual="">…desenho da peça…</g>                              ← se ergue e brilha
- *     <g data-mapa-alvo="" opacity="0" aria-hidden="true">…a mesma forma…</g>   ← parada, recebe o mouse
+ *     <g data-mapa-visual="">…área da peça…</g>                                ← pintada e com brilho
+ *     <g data-mapa-alvo="" opacity="0" aria-hidden="true">…a mesma forma…</g>   ← invisível, recebe o mouse
  *   </g>
  * Os atributos de apresentação da peça (transform, filter, opacity, style, class…) descem para um
  * `<g>` interno, para o CSS do destaque não brigar com eles.
@@ -16,11 +16,11 @@
 import { PECAS, type Peca } from '@/data/mapa';
 
 const LIMITE_BYTES = 150 * 1024;
-/** Largura do viewBox em que o destaque (erguer, brilho, foco) foi medido: o do boi provisório. */
+/** Largura do viewBox em que o destaque (brilho, foco) foi medido: o do primeiro boi. */
 const LARGURA_DE_REFERENCIA = 320;
 /** id do filtro injetado; o desenho não pode usá-lo. */
 export const ID_FILTRO_DESTAQUE = 'mapa-destaque';
-/** Folga em volta do viewBox, nas unidades da referência: cobre o brilho, a sombra e o erguer da peça. */
+/** Folga em volta do viewBox, nas unidades da referência: cobre o brilho e a sombra da peça. */
 const MARGEM_DO_FILTRO = 20;
 
 /** Atributos de uma tag, em qualquer ordem e com aspas simples ou duplas (um `>` entre aspas não fecha a tag). */

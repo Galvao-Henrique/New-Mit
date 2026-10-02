@@ -50,7 +50,7 @@ async function esperarRolagemParar(page: Page) {
   );
 }
 
-/** Um ponto a 1 unidade do viewBox acima da borda de baixo da peça (na coluna mais perto do centro). */
+/** Um ponto a 1 unidade do viewBox acima da borda de baixo da peça, onde ela dá para o fundo (na coluna mais perto do centro). */
 async function pontoNaBordaDeBaixo(page: Page, peca: string) {
   await pontoDaPeca(page, peca); // rola até a peça e espera parar
   const ponto = await page.locator(`#peca-${peca}`).evaluate((el) => {
@@ -62,6 +62,8 @@ async function pontoNaBordaDeBaixo(page: Page, peca: string) {
       const x = r.left + (r.width * i) / 24;
       for (let y = r.bottom - 0.5; y > r.top; y -= 0.5) {
         if (document.elementFromPoint(x, y)?.closest('[data-peca]') !== el) continue;
+        // Só borda que dá para o fundo: logo abaixo de uma borda com outra peça, o mouse muda de peça de verdade.
+        if (document.elementFromPoint(x, y + 3)?.closest('[data-peca]')) break;
         const distancia = Math.abs(x - (r.left + r.width / 2));
         if (!melhor || distancia < melhor.distancia) melhor = { x, y: y - pxPorUnidade, distancia };
         break;
@@ -130,15 +132,15 @@ test('passar o mouse na pá destaca só a pá', async ({ page }) => {
   await expect(page.locator('#peca-traseiro > [data-mapa-visual]')).toHaveCSS('filter', 'none');
 });
 
-test('cada uma das 6 peças tem um ponto visível que recebe o mouse', async ({ page }) => {
+test('cada peça do desenho tem um ponto visível que recebe o mouse', async ({ page }) => {
   await abrirMapa(page);
   // pontoDaPeca falha se a peça estiver toda coberta por outra (ex.: a pá antes do dianteiro no arquivo).
   for (const peca of PECAS) await pontoDaPeca(page, peca);
 });
 
-test('mouse na língua fica estável', async ({ page }) => {
+test('mouse na pá fica estável', async ({ page }) => {
   await abrirMapa(page);
-  await mexerEmVolta(page, await pontoDaPeca(page, 'lingua'), 'lingua', 'Língua Bovina');
+  await mexerEmVolta(page, await pontoDaPeca(page, 'pa'), 'pa', 'Pá de Boi');
 });
 
 test('mouse na borda de baixo do dianteiro fica estável', async ({ page }) => {
@@ -152,8 +154,25 @@ test('Boi Casado na lista destaca dianteiro, pá e traseiro', async ({ page }) =
   for (const peca of ['dianteiro', 'pa', 'traseiro']) {
     await expect(page.locator(`#peca-${peca}`)).toHaveAttribute('data-estado', 'ativo');
   }
-  await expect(page.locator('#peca-figado')).toHaveAttribute('data-estado', 'inativo');
   await expect(painel(page)).toHaveText('Boi Casado');
+});
+
+test('miúdo da lista mostra o corte sem pintar o desenho', async ({ page }) => {
+  await abrirMapa(page);
+  await page.locator('#cortes').getByRole('button', { name: 'Fígado de Bovino' }).click();
+  await expect(painel(page)).toHaveText('Fígado de Bovino');
+  await expect(page.locator('#cortes [data-peca][data-estado]')).toHaveCount(0);
+  await page.locator('#cortes').getByRole('button', { name: 'Adicionar à cotação: Fígado de Bovino' }).click();
+  await expect(page.locator('header')).toContainText('Cotação (1)');
+});
+
+test('o desenho fica por baixo das áreas, no mesmo tamanho', async ({ page }) => {
+  await abrirMapa(page);
+  const caixa = (seletor: string) => page.locator(seletor).evaluate((el) => el.getBoundingClientRect().toJSON());
+  const desenho = await caixa('#cortes img[src*="boi"]');
+  const areas = await caixa('#cortes .mapa-boi svg');
+  for (const lado of ['x', 'y', 'width', 'height'] as const)
+    expect(Math.abs(desenho[lado] - areas[lado])).toBeLessThan(1);
 });
 
 test('teclado', async ({ page }) => {

@@ -93,7 +93,7 @@ html.js [data-reveal][data-revelado] {
   transform: none;
 }
 
-/* Mapa do boi: o SVG ocupa a largura do contêiner, na proporção do viewBox. */
+/* Mapa do boi: o boi.png por baixo e o SVG das áreas clicáveis por cima, no mesmo enquadramento (o viewBox). */
 .mapa-boi svg {
   display: block;
   width: 100%;
@@ -103,27 +103,25 @@ html.js [data-reveal][data-revelado] {
 
 /*
   Peças do boi.svg. prepararSvgBoi embrulha cada uma em [data-peca] (o botão) com:
-  - [data-mapa-visual]: o desenho, que se ergue e brilha, sem receber o mouse;
-  - [data-mapa-alvo]: a mesma forma, invisível e parada, que recebe o mouse (a área não anda e não pisca).
-  Comprimentos dentro do SVG são unidades do viewBox: --mapa-escala (largura do viewBox / 320, posto na
-  raiz por prepararSvgBoi) deixa erguer, brilho e foco iguais em qualquer desenho. data-estado vem do MapaBoiInterativo.
+  - [data-mapa-visual]: a área pintada por cima do desenho, sem receber o mouse;
+  - [data-mapa-alvo]: a mesma forma, invisível, que recebe o mouse.
+  Sem nada exibido, as áreas são transparentes e o desenho aparece como é. data-estado vem do MapaBoiInterativo:
+  a peça ativa ganha um véu dourado com brilho; as outras, um véu creme que as esmaece.
+  Comprimentos dentro do SVG são unidades do viewBox: --mapa-escala (largura do viewBox / 320, posto na raiz
+  por prepararSvgBoi) deixa brilho e foco iguais em qualquer tamanho de desenho.
 */
 [data-peca] {
   cursor: pointer;
-  transition:
-    filter 200ms ease,
-    opacity 200ms ease;
 }
 
 [data-mapa-visual] {
-  transform-box: fill-box;
-  transform-origin: center;
+  fill-opacity: 0;
   transition:
-    transform 200ms ease,
+    fill-opacity 200ms ease,
     filter 200ms ease;
 }
 
-/* Vale também para filhos com pointer-events próprio: o mouse só vê a cópia parada. */
+/* Vale também para filhos com pointer-events próprio: o mouse só vê a cópia invisível. */
 [data-mapa-visual],
 [data-mapa-visual] * {
   pointer-events: none;
@@ -134,7 +132,7 @@ html.js [data-reveal][data-revelado] {
   as funções de filtro do CSS (drop-shadow, brightness) em elementos do SVG, mas aplica um filtro SVG.
 */
 [data-peca][data-estado='ativo'] > [data-mapa-visual] {
-  transform: translateY(calc(-4px * var(--mapa-escala, 1)));
+  fill-opacity: 0.5;
   filter: url(#mapa-destaque);
 }
 
@@ -145,10 +143,12 @@ html.js [data-reveal][data-revelado] {
     brightness(1.12);
 }
 
-/* Opacidade + brilho: o Safari pode ignorar filter em elementos do SVG, e a opacidade sozinha já escurece sobre o fundo. */
-[data-peca][data-estado='inativo'] {
-  opacity: 0.7;
-  filter: brightness(0.75);
+[data-peca][data-estado='inativo'] > [data-mapa-visual] {
+  fill-opacity: 0.55;
+}
+
+[data-peca][data-estado='inativo'] > [data-mapa-visual] * {
+  fill: var(--color-creme);
 }
 
 /* Seção creme: o dourado não tem contraste, o contorno do foco é dourado-escuro. */
@@ -172,12 +172,7 @@ html.js [data-reveal][data-revelado] {
     transition: none;
   }
 
-  [data-peca],
   [data-mapa-visual] {
     transition: none;
-  }
-
-  [data-peca][data-estado='ativo'] > [data-mapa-visual] {
-    transform: none;
   }
 }

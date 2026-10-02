@@ -15,6 +15,7 @@
     "fotos": "node scripts/baixar-fotos.mjs",
     "logo": "node scripts/logo-creme.mjs",
     "og": "node scripts/og.mjs",
+    "boi": "node scripts/importar-boi.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

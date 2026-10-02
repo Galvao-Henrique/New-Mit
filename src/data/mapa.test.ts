@@ -11,9 +11,9 @@ describe('mapa do boi', () => {
       { corteSlug: 'dianteiro-de-boi', peca: 'dianteiro', destaca: ['dianteiro', 'pa'] },
       { corteSlug: 'pa-de-boi', peca: 'pa', destaca: ['pa'] },
       { corteSlug: 'traseiro-de-boi', peca: 'traseiro', destaca: ['traseiro'] },
-      { corteSlug: 'figado-de-bovino', peca: 'figado', destaca: ['figado'] },
-      { corteSlug: 'lingua-bovina', peca: 'lingua', destaca: ['lingua'] },
-      { corteSlug: 'rumen-de-bovino', peca: 'rumen', destaca: ['rumen'] },
+      { corteSlug: 'figado-de-bovino', peca: null, destaca: [] },
+      { corteSlug: 'lingua-bovina', peca: null, destaca: [] },
+      { corteSlug: 'rumen-de-bovino', peca: null, destaca: [] },
     ]);
   });
 
@@ -34,9 +34,6 @@ describe('mapa do boi', () => {
       dianteiro: 'Dianteiro de Boi',
       pa: 'Pá de Boi',
       traseiro: 'Traseiro de Boi',
-      lingua: 'Língua Bovina',
-      figado: 'Fígado de Bovino',
-      rumen: 'Rúmen de Bovino',
     });
   });
 
